@@ -1,0 +1,45 @@
+{% extends 'home_page.html' %}
+
+{% block title %} {{ title }} {% endblock %}
+
+{% block content %}
+
+    <div class="input_form">
+    <div class="header">
+        <h2 class="user">{{ user  }} {{ action }} Portal</h2>
+    </div>
+    <div>
+        <form method="post" action="{{ url }}">
+            {% csrf_token %}
+
+        
+            {% if messages %}
+                <div class="message-container">
+                    {% for i in messages %}
+                        <p class="message-item {{ i.tags }}">{{ i }}</p>
+                    {% endfor %}
+                </div>
+            {% endif %}
+
+            <div class="input">
+            
+                {{ form }}
+
+            </div>
+
+            <div class="input">
+                <input type="submit" value="{{ in_type }}" class="input_button">
+            </div>
+        </form>
+    </div>
+
+    <div class="input">
+        {% if new_user %}
+            <p class="newuser">{{ new_user }}</p>
+            <button class="input_button"><a href="{{ new_user_url }}">SignIn</a></button>
+        {% endif %}
+    </div>
+    </div>
+      
+    
+{% endblock %}

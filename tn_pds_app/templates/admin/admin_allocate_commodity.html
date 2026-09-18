@@ -1,0 +1,70 @@
+{% extends 'admin/admin_home.html' %}
+
+{% block title %} {{ title }} {% endblock %}
+
+{% block content %}
+
+    <div class="input_form">
+    <div class="header">
+        <h2 class="user">{{ user  }} {{ action }}</h2>
+    </div>
+    <div>
+        <form method="post" action="{{ url }}">
+            {% csrf_token %}
+
+        
+            {% if messages %}
+                <div class="message-container">
+                    {% for i in messages %}
+                        <p class="message-item {{ i.tags }}">{{ i }}</p>
+                    {% endfor %}
+                </div>
+            {% endif %}
+
+            <div>
+                
+               <table>
+                <thead>
+                    <tr>
+                        <th>S.No</th>
+                        <th>Commodity</th>
+                        <th>Quantity</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for commodity in commodity_list %}
+                        <tr>
+                            <td>{{ forloop.counter }}</td>
+                            <td>{{ commodity.name | title }}</td>
+                            <td>
+                                
+                                <input class="input" type="number" placeholder="enter quantity" step="0.01" min="0" name="quantity_{{ commodity.id }}" value="{{ commodity.current_quantity }}" default="0.00">
+                            
+                                <select  name="unit_{{ commodity.id }}" class="input_button">
+                                    <option value="Kg" {% if commodity.current_unit == 'Kg' %}selected{% endif %}>Kg</option>
+                                    <option value="Litre" {% if commodity.current_unit == 'Litre' %}selected{% endif %}>Litre</option>
+                                </select>
+                            
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>    
+
+               </table>
+            <div class="input">
+            
+                {{ form }}
+
+            </div>
+            </div>
+
+            <div class="input">
+                <input type="submit" value="{{ in_type }}" class="input_button">
+            </div>
+        </form>
+    </div>
+
+    
+      
+    
+{% endblock %}

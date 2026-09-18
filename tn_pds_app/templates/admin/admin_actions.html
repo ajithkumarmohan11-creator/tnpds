@@ -1,0 +1,85 @@
+{% extends 'admin/admin_home.html' %}
+
+{% block title %} {{ title }} {% endblock %}
+
+{% block content %}
+
+    <div class="input_form">
+        <div class="header">
+            <h2 class="user">{{ user |title }} {{ action |title }} Page</h2>
+        </div>
+        <div>
+            <form method="post" action="{{ url }}" >
+                {% csrf_token %}
+
+        
+                {% if messages %}
+                    <div class="message-container">
+                        {% for i in messages %}
+                            <p class="message-item {{ i.tags }}">{{ i }}</p>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+
+                <div class="input">
+            
+                    {{ form }}
+
+                </div>
+
+                <div class="input">
+                    <input type="submit" value="{{ in_type | title }}" class="input_button">
+                </div>
+            </form>
+        </div>
+
+        <div>
+            {% if data  %}
+            <table>
+                <tr>
+                    <th>S.no</th>
+                    <th>{{ column_title | title }}</th>
+                    {% if commodity %}
+                        <th>price</th>
+                    {% endif %}
+                    <th>Actions</th>
+                    
+                </tr>
+                    {% for i in data %}
+                    <tr>
+                        <td>{{ forloop.counter }}</td>
+                        <td>{{ i.card_type | upper }}{{ i.commodity | title }}</td>
+
+                        {% if all_card_type %}
+                            <td><button class='input_button' ><a href="{% url 'admin_commodity_allocation' i.id %}"  >Allocate commadities</a></button></td>
+                            <td><button class='input_button' ><a href="{% url 'admin_delete_card_type' i.id %}">Delete</a></button>
+                        {% elif commodity %}
+                            <td>{{ i.price}}</td>
+                            <td><button class='input_button' ><a href="{% url 'admin_edit_commodity' i.id %}">Edit/Update</a></button></td>
+                            <td><button class='input_button' ><a href="{% url 'admin_delete_commodity' i.id %}">Delete</a></button></td>
+                        {% endif %}    
+
+
+
+                    </tr>
+                    {% endfor %} 
+
+
+            </table>
+        </div>
+        {% endif %}
+        </div>
+    <div>
+    
+
+
+    {% comment %} <div class="input">
+        {% if new_user %}
+            <p class="newuser">{{ new_user }}</p>
+            <button class="input_button"><a href="{{ new_user_url }}">SignIn</a></button>
+        {% endif %}
+    </div> {% endcomment %}
+    </div>
+      
+    
+{% endblock %}

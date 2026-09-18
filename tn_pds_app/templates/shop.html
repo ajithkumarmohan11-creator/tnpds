@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shop</title>
+</head>
+<body>
+
+    <h1>TNPDS - Fair Price Shop</h1>
+
+    <h2>Shop Details</h2>
+
+    <h3>Number : 101</h3>
+    <h3>Name : Shop-101</h3>
+    <h3>Adress : Adress</h3>
+    <h3>Working Hours : 09:00 AM to 06:00 PM </h3>
+
+    <h2> Available Commadities details </h2>
+
+    <table>
+        <thead>
+            <tr>
+                <th>S.No</th>
+                <th>Item Name</th>
+                <th>Quantity</th>
+                <th>Price</th>
+
+            </tr>
+        </thead>
+
+        <tbody>
+            {% for item in item_list %}
+            <tr>
+                <td>{{ forloop.counter }}</td>
+                <td>{{ item.name }}</td>
+                <td>{{ item.quantity }}</td>
+                <td> {{ item.
+                     }}</td>
+                <td></td>
+                <td></td>
+
+            </tr>
+        </tbody>
+
+    </table>
+
+    
+    
+</body>
+</html>
