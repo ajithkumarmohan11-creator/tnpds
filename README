@@ -1,0 +1,278 @@
+new setup=>
+
+python --version
+PS C:\django> python --version
+Python 3.14.7
+
+python -m venv venv
+PS C:\django> python -m venv venv
+
+venv\Scripts\activate
+PS C:\django> venv\Scripts\activate
+
+pip install django
+(venv) PS C:\django> pip install django
+
+django-admin startproject my_project
+(venv) PS C:\django> django-admin startproject my_project
+
+cd my_project
+(venv) PS C:\django\my_project> 
+
+python manage.py runserver
+(venv) PS C:\django\my_project> python manage.py runserver
+
+python manage.py runserver 8001
+(venv) PS C:\django\my_project> python manage.py runserver 8001
+
+Existing setuo activate =>
+
+venv\Scripts\activate
+PS C:\tn_pds> venv\Scripts\activate
+(venv) PS C:\tn_pds>
+
+ cd tn_pds_project
+(venv) PS C:\tn_pds\tn_pds_project> 
+
+python manage.py runserver 80
+(venv) PS C:\tn_pds\tn_pds_project> python manage.py runserver 80
+http://127.0.0.1:80/
+
+python manage.py startapp my_app
+(venv) PS C:\django\my_project> python manage.py startapp my_app
+
+my_project/my_project/settings.py
+
+INSTALLED_APPS = [
+    'django.contrib.admin',
+    'django.contrib.auth',
+    'django.contrib.contenttypes',
+    'django.contrib.sessions',
+    'django.contrib.messages',
+    'django.contrib.staticfiles',
+    
+]
+
+add => 'my_app'
+
+INSTALLED_APPS = [
+    'django.contrib.admin',
+    'django.contrib.auth',
+    'django.contrib.contenttypes',
+    'django.contrib.sessions',
+    'django.contrib.messages',
+    'django.contrib.staticfiles',
+    'my_app',
+]
+
+
+=> my_app/views.py
+
+from django.shortcuts import render
+
+# Create your views here.
+
+add=>
+
+from django.http import HttpResponse
+
+def home(request):
+    return HttpResponse("Hello !")
+
+
+my_project => urls.py
+
+from django.contrib import admin
+from django.urls import path
+
+urlpatterns = [
+    path('admin/', admin.site.urls),
+    
+]
+
+add=>
+
+from django.contrib import admin
+from django.urls import path
+from my_app import views
+
+
+
+urlpatterns = [
+    path('admin/', admin.site.urls),
+    path('',views.home,name='home'),
+]
+
+
+python manage.py makemigrations
+python manage.py migrate
+python manage.py runserver
+
+python manage.py runserver 8001
+
+Open Notepad =>
+Run as Administrator
+
+C:\Windows\System32\drivers\etc\hosts
+add=> bottom 
+127.0.0.1       custome_name
+eg=> 
+127.0.0.1       cmcell.local    
+
+
+my_project=>
+
+settings.py
+
+ALLOWED_HOSTS = ['cmcell.local', '127.0.0.1', 'localhost']
+
+search :
+
+1.default:
+
+http://127.0.0.1:8000/
+
+2.custom_number :
+
+ http://127.0.0.1:8001/
+
+3.custom_name.local :
+
+python manage.py runserver 80
+
+search =>
+
+custom_name.local
+eg=> 
+tnpds.local
+
+
+
+
+my_app=>
+
+Create Folder :
+templates
+=> create html files here
+eg=> 
+login.html
+
+my_app=>
+create file
+=> forms.py
+
+from django import forms
+
+=> create all required fields here :
+
+class login(forms.Form):
+    mobile_number=forms.CharField(
+        label='Mobile Number',
+        widget=forms.TextInput(
+            attrs={
+                'placeholder':'Enter Your Mobile Number'
+            }
+        )
+    )
+
+=> my_project=> views.py
+
+create views functions :
+
+def login_views(request):
+    if request.method=='POST':          (always POST method)
+        form=login(request.POST)
+    else:
+        form=login()    
+    return render(request,'login.html',{'form':form})  
+
+
+=> my_app => templates =>  login.html
+
+   <form method="post">         (always POST method)
+        {% csrf_token %}        ( csrf_token - must for  POST Method )
+
+        {{ form }}              ( include the variable )
+
+        {{ form.as_p }}         ( include the variable as paragraph)
+
+        {{ form.as_ul }}         ( include the variable as ul )
+
+
+
+        <div>
+            <input type="submit" value="Login">
+        </div>
+
+    </form>
+
+
+=> my_project=> urls.py
+=> set path :
+
+    path('',views.login_views,name='login')
+
+
+=> my_app=>models.py
+create models
+
+class table_name(models.Model):
+    column_name=models.data_type(attrs)
+
+    class Meta:
+    db_table='table_name'
+
+eg=>
+class StudentDB(models.Model):
+    name = models.CharField(max_length=100)
+    email_id=models.EmailField(max_length=100,unique=True)
+    password=models.CharField(max_length=100)
+    phone=models.CharField(max_length=10,unique=True)
+
+    class Meta:
+        db_table='Student_details_DB'
+
+
+=> my_project=> settings.py
+import :
+
+from django.db.backends.mysql.base import DatabaseWrapper
+DatabaseWrapper.check_database_version_supported = lambda self: None
+
+update : 
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
+    }
+}
+
+into this :
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'tn_pds_db',
+        'USER': 'root',
+        'PASSWORD': '11.01.@AjithM',
+        'HOST': 'localhost',
+        'PORT': '3306',
+    }
+}
+
+terminal :
+
+pip install mysqlclient
+(venv) PS C:\tn_pds\tn_pds_project> pip install mysqlclient
+
+
+python manage.py makemigrations
+(venv) PS C:\tn_pds\tn_pds_project> python manage.py makemigrations
+
+python manage.py migrate
+(venv) PS C:\tn_pds\tn_pds_project> python manage.py migrate
+
+python manage.py runserver 80  
+(venv) PS C:\tn_pds\tn_pds_project> python manage.py runserver 80  
+
+
