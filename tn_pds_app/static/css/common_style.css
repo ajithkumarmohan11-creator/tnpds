@@ -18,7 +18,8 @@ body{
     background-color:#fff;
 
     padding:clamp(0.75rem,1.5vw,1rem) clamp(1rem,4vw,3rem);
-    border-bottom:2px solid #f3d21aec ;
+    border-top:2px solid #f3d21aec ;
+    border-bottom:3px solid #f3d21aec ;
     flex-wrap:wrap;
     gap: 0.75rem;
 
@@ -26,13 +27,16 @@ body{
 }
 
 .navbar-logo h2{
-    color:hsla(207, 100%, 51%, 0.619);
+    color:blue;
     letter-spacing: 1px;
-    line-height:1;
+    line-height:3;
+    font-size: xx-large;
+    font-weight:600;
+    text-shadow: 1px 1px 3px yellow;
 }
 
 .navbar-logo h2:hover{
-    color:blue;
+    color:red;
    
 }
 
@@ -110,10 +114,20 @@ body{
 }
 
 .user{
-    color:blue;
+    color:tomato;
     font-weight:bold;
     text-align: center;
-    padding:10px;
+    padding:20px;
+    border-bottom: yellow 3px dotted;
+    text-shadow: 1px 1px 2px  blue;
+
+
+}
+
+.user:hover{
+    color:palevioletred;
+    border-bottom: 3px red dashed;
+    text-shadow: 1px 1px 2px  blue;
 
 
 }
@@ -139,7 +153,7 @@ body{
 } */
 
 .newuser{
-    color:black;
+    color:red;
     padding: 10px;
     /* border: 1px solid black; */
     margin:10px;
@@ -149,17 +163,28 @@ body{
 
 }
 
-.input_button{
-    border-radius :15px;
-    border:1px solid black;
-    background-color: greenyellow;
+.newuser_type{
+    color: tomato;
+    font-weight: 900;
+    font-size: x-large;
 }
 
-.input_button :hover{
-    border-radius :15px;
+.input_button{
+    border-radius :25px;
     border:1px solid black;
-    color: #faf4f4;
-    background-color: rgb(104, 53, 225);
+    background-color: greenyellow;
+    border: solid 2px blue;
+    font-size: large;
+}
+
+.input_button:hover{
+    background-color: blue;
+    color: white;
+}
+
+.input_button a:hover{
+    background-color:blue;
+    color: white;
 }
 
 .input input{
@@ -173,6 +198,25 @@ body{
     margin: 50px auto;
 } */
 
+.input label{
+    color:blueviolet ;
+    font-size: large;
+    font-weight: 900;
+}
+
+.input input{
+    border-radius: 15px;
+    font-size: medium;
+    font-weight: 600;
+}
+.input input:hover{
+    background-color: aqua;
+    border-radius: 15px;
+    font-size: medium;
+    font-weight: 600;
+}
+
+
 .input input,label,a{
     color:black;
     padding: 10px;
@@ -185,4 +229,22 @@ body{
     display: block;
     
 
+}
+
+.welcome{
+    background-color: antiquewhite;
+    text-align: center;
+    padding: 10px;
+    border: 5px solid yellow;
+    color: red;
+    text-shadow: 1px 1px 2px ;
+    
+}
+
+.welcome:hover{
+    background-color: aqua;
+    color: blue;
+    text-shadow: 1px 1px 2px;
+
+    
 }

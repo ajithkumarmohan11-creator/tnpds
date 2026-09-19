@@ -32,8 +32,11 @@ def consumer_signup_views(request):
             else:
                 if consumer_details.objects.filter(card_number=card_number).exists():
                     messages.error(request,'card number already Registerd')
+                    return redirect('consumer_login')
                 elif consumer_details.objects.filter(mobile_number=mobile_number).exists():
-                    messages.warning(request,'Mobile number already Registered')  
+                    messages.error(request,'Mobile number already Registered')  
+                    return redirect('consumer_login')
+
                 else:      
                     consumer_details.objects.create(
                     card_type=card_type,
@@ -42,8 +45,8 @@ def consumer_signup_views(request):
                     password=password
 
                     )
-                    messages.info(request,'consumer details added into db successfully')
-                    messages.success(request,'consumer details added into db successfully')
+                    messages.success(request,'consumer SignUp successfully')
+                    return redirect('consumer_login')
 
     else:
         form=consumer_signup()    
@@ -68,10 +71,13 @@ def consumer_login_views(request):
             if consumer:
                 if consumer.password==password:
                     messages.success(request,'login successfull')
+                    return redirect('consumer_home_page')
                 else:
                     messages.error(request,'wrong password')
             else:
-                messages.error(request,'consumer not found')        
+                messages.error(request,'consumer not found')    
+                return redirect('consumer_signup')
+
 
     else:
         form=consumer_login()    
@@ -82,9 +88,12 @@ def consumer_login_views(request):
                             'action':'LogIn',
                             'url':'/consumer_login/',
                             'in_type':'LogIn',
-                            'new_user':'New User ? First SignIn Please',
+                            'new_user':'Consumer',
                             'new_user_url':'/consumer_signup/',
                                              }) 
+
+def consumer_home_page_views(request):
+    return render(request,'consumer/consumer_home_page.html')
 
 def shop_worker_signup_views(request):
     if request.method=='POST':
@@ -102,6 +111,8 @@ def shop_worker_signup_views(request):
             else:
                 if shop_worker_details.objects.filter(shop_worker_id=shop_worker_id).exists():
                     messages.error(request,'shop worker id already Registerd')
+                    return redirect('shop_worker_login')
+
                 else:      
                     shop_worker_details.objects.create(
                         shop_id=shop_id,
@@ -110,8 +121,8 @@ def shop_worker_signup_views(request):
                         password=password
 
                     )
-                    messages.info(request,'shop worker details added into db successfully')
-                    messages.success(request,'shop worker details added into db successfully')
+                    messages.success(request,'shop worker SignUp successfully')
+                    return redirect('shop_worker_login')
 
     else:
         form=shop_worker_signup()    
@@ -137,10 +148,13 @@ def shop_worker_login_views(request):
                 if shop_worker.password==password:
                     messages.success(request,'login successfull')
                     messages.info(request,'Work Is God')
+                    return redirect('shop_home_page')
                 else:
                     messages.error(request,'wrong password')
             else:
-                messages.warning(request,'shop worker not found')        
+                messages.error(request,'shop worker not found')  
+                return redirect('shop_worker_signup')
+
 
     else:
         form=shop_worker_login()    
@@ -151,7 +165,7 @@ def shop_worker_login_views(request):
                             'action':'LogIn',
                             'url':'/shop_worker_login/',
                             'in_type':'LogIn',
-                            'new_user':'New User ?  First SignIn Please',
+                            'new_user':'shop worker',
                             'new_user_url':'/shop_worker_signup/',
                                              }) 
 
@@ -170,6 +184,8 @@ def officer_signup_views(request):
             else:
                 if officer_details.objects.filter(officer_id=officer_id).exists():
                     messages.error(request,'officer id already Registerd')
+                    return redirect('officer_login')
+
                 else:      
                     officer_details.objects.create(
                         officer_id=officer_id,
@@ -177,8 +193,8 @@ def officer_signup_views(request):
                         password=password
 
                     )
-                    messages.info(request,'officer details added into db successfully')
-                    messages.success(request,'officer details added into db successfully')
+                    messages.success(request,'officer Signup successfully')
+                    return redirect('officer_login')
 
     else:
         form=officer_signup()    
@@ -203,10 +219,13 @@ def officer_login_views(request):
             if officer:
                 if officer.password==password:
                     messages.success(request,'login successfull')
+                    return redirect('officer_home_page')
                 else:
                     messages.error(request,'wrong password')
             else:
-                messages.error(request,'officer not found')        
+                messages.error(request,'officer not found')      
+                return redirect('officer_signup')
+
 
     else:
         form=officer_login()    
@@ -217,9 +236,12 @@ def officer_login_views(request):
                             'action':'LogIn',
                             'url':'/officer_login/',
                             'in_type':'LogIn',
-                            'new_user':'New User ? First SignIn Please',
+                            'new_user':'Officer',
                             'new_user_url':'/officer_signup/',
                                              }) 
+
+def officer_home_page_views(request):
+    return render(request,'officer/officer_home_page.html')
 
 def admin_signup_views(request):
     if request.method=='POST':
@@ -236,6 +258,8 @@ def admin_signup_views(request):
             else:
                 if admin_details.objects.filter(admin_id=admin_id).exists():
                     messages.error(request,'admin id already Registerd')
+                    return redirect('admin_login')
+
                 else:      
                     admin_details.objects.create(
                         admin_id=admin_id,
@@ -243,8 +267,7 @@ def admin_signup_views(request):
                         password=password
 
                     )
-                    messages.info(request,'admin details added into db successfully')
-                    messages.success(request,'admin details added into db successfully')
+                    messages.success(request,'admin Signup successfully')
                     return redirect('admin_login')
 
     else:
@@ -254,7 +277,7 @@ def admin_signup_views(request):
                             'title':'admin SignUp',
                             'user':'Admin',
                             'action':'SignUp',
-                            'url':'admin_signup',
+                            'url':'/admin_signup/',
                             'in_type':'Sign Up'
                                              }) 
 
@@ -274,7 +297,9 @@ def admin_login_views(request):
                 else:
                     messages.error(request,'wrong password')
             else:
-                messages.error(request,'admin not found')        
+                messages.error(request,'admin not found')  
+                return redirect('admin_signup')
+
 
     else:
         form=admin_login()    
@@ -285,7 +310,7 @@ def admin_login_views(request):
                             'action':'LogIn',
                             'url':'/admin_login/',
                             'in_type':'LogIn',
-                            'new_user':'New User ? First SignIn Please',
+                            'new_user':'Admin',
                             'new_user_url':'/admin_signup/',
                                              }) 
 
@@ -305,8 +330,9 @@ def admin_add_card_type_views(request):
                                        card_type=enter_card_type
                 
                                     )
-                messages.info(request,'card type added into db successfully')
                 messages.success(request,'card type added into db successfully')
+                return redirect('admin_add_card_type')
+
                       
 
     else:
@@ -341,6 +367,8 @@ def admin_add_commodity_views(request):
 
             if commodity_details.objects.filter(commodity=enter_commodity).exists():
                     messages.info(request,'commodity Already exist')
+                    return redirect('admin_add_commodity')
+                    
                 
             else:
                 commodity_details.objects.create(
@@ -348,8 +376,9 @@ def admin_add_commodity_views(request):
                                        price=enter_price
                 
                                     )
-                messages.info(request,'commodity added into db successfully')
                 messages.success(request,'commodity added into db successfully')
+                return redirect('admin_add_commodity')
+
                       
 
     else:
@@ -430,9 +459,6 @@ def admin_commodity_allocation_views(request, card_id):
         }
     )
 
-                            
-                                     
-
 def admin_edit_commodity_views(request, commodity_id):
     commodity_item = get_object_or_404(commodity_details, id=commodity_id)
 
@@ -469,6 +495,7 @@ def admin_edit_commodity_views(request, commodity_id):
             'commodity': True,
         }
     )
+
 def admin_delete_commodity_views(request, commodity_id):
     commodity_item = get_object_or_404(commodity_details, id=commodity_id)
 
@@ -479,8 +506,6 @@ def admin_delete_commodity_views(request, commodity_id):
     messages.success(request, f'{commodity_name} deleted successfully!')
     return redirect('admin_add_commodity')
 
-
-
 def admin_delete_card_type_views(request, card_id):
     card = get_object_or_404(card_type_details, id=card_id)
     card_name = card.card_type
@@ -488,6 +513,9 @@ def admin_delete_card_type_views(request, card_id):
     
     messages.error(request, f'Card type "{card_name}" deleted!')
     return redirect('admin_add_card_type')
+
+def shop_home_page_views(request):
+    return render(request,'shop/shop_home_page.html')
 
 
 

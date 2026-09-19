@@ -28,15 +28,15 @@
             </div>
 
             <div class="input">
-                <input type="submit" value="{{ in_type }}" class="input_button">
+                <input type="submit" value="{{ in_type }}" class="input_button"  style="border-radius: 20px; border: 2px solid blue;">
             </div>
         </form>
     </div>
 
     <div class="input">
         {% if new_user %}
-            <p class="newuser">{{ new_user }}</p>
-            <button class="input_button"><a href="{{ new_user_url }}">SignIn</a></button>
+            <p class="newuser">New <span class='newuser_type'>{{ new_user }} ?</span>  First SignUp</p>
+            <button class="input_button"><a href="{{ new_user_url }}">SignUp</a></button>
         {% endif %}
     </div>
     </div>

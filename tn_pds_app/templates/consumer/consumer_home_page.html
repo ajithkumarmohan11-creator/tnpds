@@ -5,9 +5,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Page</title>
+    <title>Consumer Page</title>
 
-    <link rel="stylesheet"  href="{% static 'css/common_style.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/common_style.css' %}">
 
 </head>
 <body>
@@ -15,17 +15,17 @@
 
     <header class="top-navbar">
         <div class="navbar-logo">
-            <h2 class="title">Admin</h2>
+            <h2 class="title">Consumer</h2>
         </div>
         <nav class="navbar-links">
-            <button class="button"><a href="{% url 'admin_add_card_type' %}" class="navbar-button">Add Card Type</a></button>
-            <button class="button"><a href="{% url 'admin_add_commodity' %}" class="navbar-button">Add Product / Commadities</a></button>
+            <button class="button"><a href="#" class="navbar-button">Profile</a></button>
+            <button class="button"><a href="#" class="navbar-button">Shop</a></button>
             <button class="button"><a href="#" class="navbar-button">Griveance</a></button>
             <button class="button"><a href="#" class="navbar-button">Feedback</a></button>
         </nav>
     </header>
 
-    <h2 class="welcome" >Welcome To Admin Portal </h2>
+    <h2 class="welcome" >Welcome To Consumer Portal</h2>
 
     {% block content %}
     {% endblock %}

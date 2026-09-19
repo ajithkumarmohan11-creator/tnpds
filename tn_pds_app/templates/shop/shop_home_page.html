@@ -1,0 +1,39 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shop Page</title>
+
+    <link rel="stylesheet" type="text/css" href="{% static 'css/common_style.css' %}">
+
+</head>
+<body>
+
+
+    <header class="top-navbar">
+        <div class="navbar-logo">
+            <h2 class="title">Shop</h2>
+        </div>
+        <nav class="navbar-links">
+            <button class="button"><a href="#" class="navbar-button">Profile</a></button>
+            <button class="button"><a href="#" class="navbar-button">Product details</a></button>
+            <button class="button"><a href="#" class="navbar-button">Sales details</a></button>
+            <button class="button"><a href="#" class="navbar-button">Card details</a></button>
+            <button class="button"><a href="#" class="navbar-button">Griveance</a></button>
+            <button class="button"><a href="#" class="navbar-button">Feedback</a></button>
+        </nav>
+    </header>
+
+    <h2 class="welcome" >Welcome To shop Portal</h2>
+
+    {% block content %}
+    {% endblock %}
+   
+
+
+    
+</body>
+</html>

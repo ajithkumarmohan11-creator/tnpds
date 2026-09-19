@@ -24,11 +24,17 @@ urlpatterns = [
     path('',views.home,name='home'),
     path('consumer_signup/',views.consumer_signup_views,name='consumer_signup'),
     path('consumer_login/',views.consumer_login_views,name='consumer_login'),
+    path('consumer_home_page/',views.consumer_home_page_views,name='consumer_home_page'),
+
     # path('shop/',views.shop_views,name='shop'),
     path('shop_worker_signup/',views.shop_worker_signup_views,name='shop_worker_signup'),
     path('shop_worker_login/',views.shop_worker_login_views,name='shop_worker_login'),
+
     path('officer_signup/',views.officer_signup_views,name='officer_signup'),
     path('officer_login/',views.officer_login_views,name='officer_login'),
+    path('officer_home_page/',views.officer_home_page_views,name='officer_home_page'),
+
+
     path('admin_signup/',views.admin_signup_views,name='admin_signup'),
     path('admin_login/',views.admin_login_views,name='admin_login'),
     path('admin_add_card_type/',views.admin_add_card_type_views,name='admin_add_card_type'),
@@ -38,6 +44,9 @@ urlpatterns = [
     path('admin_edit_commodity/<int:commodity_id>/', views.admin_edit_commodity_views, name='admin_edit_commodity'),
     path('admin_delete_commodity/<int:commodity_id>/', views.admin_delete_commodity_views, name='admin_delete_commodity'),
     path('delete_card_type/<int:card_id>/', views.admin_delete_card_type_views, name='admin_delete_card_type'),
+
+    path('shop_home_page/',views.shop_home_page_views,name='shop_home_page'),
+
 
 
 
