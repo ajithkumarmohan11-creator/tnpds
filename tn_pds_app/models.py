@@ -4,8 +4,17 @@ from django.db import models
 
 # Create your models here.
 
-class consumer_details(models.Model):
+class card_type_details(models.Model):
     card_type=models.CharField(max_length=50)
+
+    class Meta:
+            db_table='card_type_details'
+
+    def __str__(self):
+        return self.card_type        
+
+class consumer_details(models.Model):
+    card_type= models.ForeignKey(card_type_details, on_delete=models.CASCADE)
     card_number=models.CharField(max_length=30,primary_key=True)
     mobile_number=models.CharField(max_length=15)
     password=models.CharField(max_length=100)
@@ -101,17 +110,14 @@ class non_pds_commodities(models.Model):
     class Meta:
         db_table='non_pds_commodities'
 
-class card_type_details(models.Model):
-    card_type=models.CharField(max_length=50)
-
-    class Meta:
-            db_table='card_type_details'
 
 class commodity_details(models.Model):
-    units=[('kg','Kg'),('litre','litre')]
+    units=[('kg','Kg'),('litre','Litre')]
     commodity=models.CharField(max_length=100)
     price=models.DecimalField(max_digits=10,decimal_places=2,default=00.00)
-    unit = models.CharField(max_length=10, choices=units, default='kg')
+    unit = models.CharField(max_length=10, choices=units,default='kg')
+    commodity_image = models.ImageField(upload_to='commodities/', blank=True, null=True)
+    
     class Meta:
             db_table='commodity_details' 
 
@@ -123,7 +129,6 @@ class commodity_allocation_details(models.Model):
     card_type=models.ForeignKey(card_type_details,on_delete=models.CASCADE)
     commodity=models.ForeignKey(commodity_details,on_delete=models.CASCADE)
     quantity=models.DecimalField(max_digits=10,decimal_places=2,default=00.00)
-    # max_cap=models.DecimalField(max_digits=10,decimal_places=2,default=00.00)
     unit = models.CharField(max_length=10, choices=commodity_details.units, default='Kg')
 
     class Meta:
@@ -133,6 +138,21 @@ class commodity_allocation_details(models.Model):
          return f'{self.card_type.card_type}-{self.commodity.commodity}'          
 
                        
+class cart_item_details(models.Model):
+    consumer = models.ForeignKey(consumer_details, on_delete=models.CASCADE)
+    commodity=models.ForeignKey(commodity_details,on_delete=models.CASCADE)
+    quantity=models.PositiveIntegerField(default=1)
+    add_time=models.DateTimeField(auto_now_add=True)
 
+    def get_total_price(self):
+        return self.quantity * self.commodity.price
+
+    class Meta:
+        db_table='cart_item_details' 
+        unique_together = ('consumer', 'commodity')
+
+
+    def __str__(self):
+        return  f'{self.consumer.mobile_number}-{self.commodity.commodity} ({self.quantity})'
 
 

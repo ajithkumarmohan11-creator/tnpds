@@ -1,12 +1,14 @@
 from django import forms
-from .models import commodity_details
+from .models import commodity_details,card_type_details
+
 
 
 class consumer_signup(forms.Form):
 
-    card_type=forms.CharField(
+    card_type=forms.ModelChoiceField(
+        queryset=card_type_details.objects.all(),
         label='Smart Card Type',
-        widget=forms.TextInput(
+        widget=forms.Select(
             attrs={
                 'placeholder':'Enter Your Smart Card Type'
             }
@@ -273,7 +275,22 @@ class admin_add_commodity(forms.Form):
                 'step':'0.01'
             }
         )
-    )    
+    ) 
+
+    unit=forms.ChoiceField(
+            label='Unit',
+            choices=[('kg','Kg'),('litre','Litre')],
+            widget=forms.Select(
+                attrs={
+                    'class':'form-control'
+                }
+            )
+        )    
+    commodity_image = forms.ImageField(
+        label='Product Image',
+        required=False,
+        widget=forms.FileInput(attrs={'class': 'form-control mb-3'})
+    )
 
 class admin_commodity_allocation(forms.Form):
     commodity=forms.ModelMultipleChoiceField(

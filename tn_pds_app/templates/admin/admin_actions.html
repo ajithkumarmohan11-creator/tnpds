@@ -8,8 +8,23 @@
         <div class="header">
             <h2 class="user">{{ user |title }} {{ action |title }} Page</h2>
         </div>
+
+        <header class="top-navbar">
+        <div class="navbar-logo">
+            <h2 class="title">Consumer</h2>
+        </div>
+
+        
+        <nav class="navbar-links">
+            <button class="button"><a href="#" class="navbar-button">Profile</a></button>
+            <button class="button"><a href="{% url 'consumer_product_details' %}" class="navbar-button">Shop / Purchase</a></button>
+            <button class="button"><a href="#" class="navbar-button">Griveance</a></button>
+            <button class="button"><a href="#" class="navbar-button">Feedback</a></button>
+        </nav>
+        </header>
+
         <div>
-            <form method="post" action="{{ url }}" >
+            <form method="post" action="{{ url }}" enctype="multipart/form-data">
                 {% csrf_token %}
 
         
@@ -19,7 +34,8 @@
                             <p class="message-item {{ i.tags }}">{{ i }}</p>
                         {% endfor %}
                     </div>
-                {% endif %}
+                {% endif %}  
+          
 
                 <div class="input">
             
@@ -34,21 +50,27 @@
         </div>
 
         <div>
-            {% if data  %}
+            {% if card_type  %}
             <table>
                 <tr>
                     <th>S.no</th>
                     <th>{{ column_title | title }}</th>
                     {% if commodity %}
+                        <th>Unit</th>
                         <th>price</th>
                     {% endif %}
                     <th>Actions</th>
                     
                 </tr>
-                    {% for i in data %}
+                    {% for i in card_type %}
                     <tr>
                         <td>{{ forloop.counter }}</td>
                         <td>{{ i.card_type | upper }}{{ i.commodity | title }}</td>
+                        {% if commodity %}
+                            <td>{{ i.commodity.unit }}</td>
+                        {% endif %}    
+
+
 
                         {% if all_card_type %}
                             <td><button class='input_button' ><a href="{% url 'admin_commodity_allocation' i.id %}"  >Allocate commadities</a></button></td>
@@ -81,5 +103,50 @@
     </div> {% endcomment %}
     </div>
       
-    
+   
+
+
+<div>
+    {% if data  %}
+
+        <div style="display: flex; flex-wrap: wrap; gap: 24px; padding: 25px;">
+            {% for item in data %}
+        
+            <div class="cardj shadow-sm" style="width: 260px; border-radius: 12px; overflow: hidden; border: 1px solid #e0e0e0; background: #fff;">
+            
+                <div style="height: 170px; background-color: #fff; display: flex; align-items: center; justify-content: center; padding: 12px; border-bottom: 1px solid #f1f1f1;">
+                
+                {% if item.commodity_image %}
+                    <img src="{{ item.commodity_image.url }}" 
+                        alt="{{ item.commodity }}" 
+                        style="max-height: 100%; max-width: 100%; object-fit: contain;">
+            {% else %}
+                    <img src="#" 
+                        alt="{{ item.commodity }}" 
+                        style="max-height: 100%; max-width: 100%; object-fit: contain;">
+               
+            {% endif %}        
+        </div>
+                <div class="card-body text-center p-3">
+                    <h2 class="card-title text-primary fw-bold text-capitalize mb-2">{{ item.commodity }}</h2>
+                    <h3 class="card-text text-success fw-bold mb-3">Price: ₹{{ item.price }} / {{ item.unit }}</h3>
+                    
+                    <div class="cart-action-container mx-auto">
+                        <a  class="btn btn-warning fw-bold add-btn w-100 " href="{% url 'admin_edit_commodity' item.id %}">Edit / Update</a>
+
+                        <a  class="btn btn-danger fw-bold add-btn w-100 " href="{% url 'admin_delete_commodity' item.id %}">Delete</a>
+
+                           
+
+                    </div> 
+
+                </div>
+                </div>
+                
+        {% endfor %} 
+
+    {% endif %}    
+
+
+
 {% endblock %}

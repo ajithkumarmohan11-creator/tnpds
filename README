@@ -276,3 +276,37 @@ python manage.py runserver 80
 (venv) PS C:\tn_pds\tn_pds_project> python manage.py runserver 80  
 
 
+=> for media :
+
+1.settings.py 
+
+import os
+
+MEDIA_URL='/media/'
+MEDIA_ROOT=os.path.join(BASE_DIR,'media')
+
+2.url.py la => add 
+import :
+
+from django.conf import settings
+from django.conf.urls.static import static
+
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+ 
+3.models.py
+add=>
+
+commodity_image = models.ImageField(upload_to='commodities/', blank=True, null=True)
+
+4.
+install=>
+in terminal =>
+
+pip install Pillow 
+python manage.py makemigrations
+python manage.py migrate
+
+5.add
+enctype="multipart/form-data"
+<form method="post" action="{{ url }}" enctype="multipart/form-data">

@@ -17,6 +17,8 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 from tn_pds_app import views
+from django.conf import settings
+from django.conf.urls.static import static
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -25,6 +27,13 @@ urlpatterns = [
     path('consumer_signup/',views.consumer_signup_views,name='consumer_signup'),
     path('consumer_login/',views.consumer_login_views,name='consumer_login'),
     path('consumer_home_page/',views.consumer_home_page_views,name='consumer_home_page'),
+    path('consumer_product_details/',views.consumer_product_details_views,name='consumer_product_details'),
+    path('add_to_cart/<int:commodity_id>/',views.add_to_cart_views,name='add_to_cart'),
+    path('remove_from_cart/<int:commodity_id>/',views.remove_from_cart_views,name='remove_from_cart'),
+
+    path('cart/',views.cart_views,name='cart'),
+
+
 
     # path('shop/',views.shop_views,name='shop'),
     path('shop_worker_signup/',views.shop_worker_signup_views,name='shop_worker_signup'),
@@ -52,3 +61,6 @@ urlpatterns = [
 
 
 ]
+
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -1,0 +1,125 @@
+{% extends 'consumer/consumer_home_page.html' %}
+  
+
+{% block content %}
+
+ <header class="top-navbar">
+        <div class="navbar-logo">
+            <h2 class="title">Admin</h2>
+        </div>
+        <nav class="navbar-links">
+            <button class="button"><a href="{% url 'admin_add_card_type' %}" class="navbar-button">Add Card Type</a></button>
+            <button class="button"><a href="{% url 'admin_add_commodity' %}" class="navbar-button">Add Product / Commadities</a></button>
+            <button class="button"><a href="#" class="navbar-button">Griveance</a></button>
+            <button class="button"><a href="#" class="navbar-button">Feedback</a></button>
+        </nav>
+    </header>
+     
+    <!-- <table class="table">
+        <thead class="column-head">
+            <tr class="column-row">
+                <th class="column-data">S.No</th>
+                <th class="column-data">Product</th>
+                <th class="column-data">Allocate Quantity </th>
+                <th class="column-data">Unit</th>
+                <th class="column-data">Price</th>
+                <th class="column-data">Add product</th>
+                <th class="column-data">cart</th>
+            </tr>
+        </thead>
+        {% for product in allocated_commodities %}
+
+        <tr class="column-row">
+            <td class="column-data"> {{ forloop.counter }}</td>
+            <td class="column-data"> {{ product.commodity }}</td>
+            <td class="column-data">{{ product.quantity }}   </td>
+            <td class="column-data">{{ product.unit}}</td>
+            <td class="column-data">{{ product.commodity.price }}</td>
+            <td class="column-data" style="max-width: 110px;"> 
+                <div class="cart-action-container mx-auto" style="max-width: 110px;">
+                    <button type="button" class="btn btn-warning fw-bold add-btn w-50 {% if product.in_cart_qty > 0 %}d-none{% endif %}" data-id="{{ product.commodity.id }}">Add</button>
+            
+                    <div class="qty-box justify-content-between align-items-center {% if product.in_cart_qty > 0 %}d-flex{% else %}d-none{% endif %}" id="qty-box-{{ product.commodity.id }}" style="background-color: rgb(224, 193, 37); border-radius: 6px;">
+
+                        <button  type="button" class="btn btn-danger fw-bold minus-btn" data-id="{{ product.commodity.id }}">-</button>
+                        <span class="fw-bold fs-6 qty-count" id="qty-val-{{ product.commodity.id}}">{{ product.in_cart_qty|default:product.quantity }}</span>
+                        <button  type="button" class="btn btn-success fw-bold plus-btn" data-id="{{ product.commodity.id }}">+</button>
+
+                    </div>
+
+                </div> 
+            </td>
+                <th class="column-data"><a href="{% url 'cart' %}"  class="btn btn-warning  fw-bold">cart</a></th>
+
+
+            
+        </tr>    
+
+
+        {% empty %}
+        <tr>
+            <td>No Commodities Allocated for this type card</td>
+        </tr>  
+
+        {% endfor %}
+
+     </table>     -->
+    
+    <div style="display: flex; flex-wrap: wrap; gap: 24px; padding: 25px;">
+        {% for product in allocated_commodities %}
+        
+        <div class="card shadow-sm" style="width: 260px; border-radius: 12px; overflow: hidden; border: 1px solid #e0e0e0; background: #fff;">
+            
+            <div style="height: 170px; background-color: #fff; display: flex; align-items: center; justify-content: center; padding: 12px; border-bottom: 1px solid #f1f1f1;">
+                
+                {% if product.commodity.commodity_image %}
+                    <img src="{{ product.commodity.commodity_image.url }}" 
+                        alt="{{ product.commodity.commodity }}" 
+                        style="max-height: 100%; max-width: 100%; object-fit: contain;">
+            {% else %}
+                    <img src="#" 
+                        alt="{{ product.commodity.commodity }}" 
+                        style="max-height: 100%; max-width: 100%; object-fit: contain;">
+               
+            {% endif %}        
+        </div>
+                <div class="card-body text-center p-3">
+                    <h2 class="card-title text-primary fw-bold text-capitalize mb-2">{{ product.commodity.commodity }}</h2>
+                    <p class="card-text text-muted mb2-2" >Allocate Quantity: {{ product.quantity }}/  {{ product.unit }}</p>
+                    <h3 class="card-text text-success fw-bold mb-3">Price: ₹{{ product.commodity.price }} / {{ product.unit }}</h3>
+                    
+                    <div class="cart-action-container mx-auto">
+                        <button type="button" class="btn btn-warning fw-bold add-btn w-100 {% if product.in_cart_qty > 0 %}d-none{% endif %}" data-id="{{ product.commodity.id }}">Add</button>
+            
+                            <div class="qty-box justify-content-between align-items-center {% if product.in_cart_qty > 0 %}d-flex{% else %}d-none{% endif %}" id="qty-box-{{ product.commodity.id }}" style="background-color: rgb(224, 193, 37); border-radius: 6px;">
+
+                                <button  type="button" class="btn btn-danger fw-bold minus-btn" data-id="{{ product.commodity.id }}">-</button>
+                                <span class="fw-bold fs-6 qty-count" id="qty-val-{{ product.commodity.id}}">Allocate Qty :{{ product.in_cart_qty|default:product.quantity }}</span>
+                                <button  type="button" class="btn btn-success fw-bold plus-btn" data-id="{{ product.commodity.id }}">+</button>
+
+                            </div>
+
+                    </div> 
+
+                </div>
+                </div>
+                
+        {% endfor %} 
+
+        <div style="position: fixed; bottom: 25px; right: 35px; z-index: 1050;">
+            <a href="{% url 'cart' %}" class="btn btn-warning fw-bold px-4 py-2 shadow-lg d-flex align-items-center gap-2" style="border-radius: 50px; font-size: 16px; border: 2px solid #e0a800;">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-cart3" viewBox="0 0 16 16">
+                    <path d="M0 1.5A.5.5 0 0 1 .5 1H2a.5.5 0 0 1 .485.379L2.89 3H14.5a.5.5 0 0 1 .49.598l-1 5a.5.5 0 0 1-.465.401l-9.397.472L4.415 11H13a.5.5 0 0 1 0 1H4a.5.5 0 0 1-.491-.408L2.01 3.607 1.61 2H.5a.5.5 0 0 1-.5-.5zM3.102 4l.84 4.479 9.144-.459L13.89 4H3.102zM5 12a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm7 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm-7 1a1 1 0 1 1 0 2 1 1 0 0 1 0-2zm7 0a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"/>
+                </svg>
+                <span>View Cart</span>
+            </a>
+        </div>
+
+        
+    </div>  
+    
+    
+
+
+{% endblock %}
+
