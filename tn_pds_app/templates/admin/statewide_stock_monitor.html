@@ -1,0 +1,116 @@
+{% extends 'common/base_home_page.html' %}
+
+{% block content %}
+<div class="container mt-4 mb-5">
+    <!-- Header -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <h2 class="text-primary fw-bold">
+                <i class="fa-solid fa-earth-asia me-2"></i> Statewide Consolidated Stock Monitor (TNPDS)
+            </h2>
+            <p class="text-muted">Detailed inventory and required stock overview across all fair price shops in Tamil Nadu.</p>
+        </div>
+    </div>
+
+    <!--  Statewide Summary Cards (Total Shops Card is Clickable!) -->
+    <div class="row mb-4">
+        <div class="col-md-4 mb-3">
+            <a href="{% url 'admin_statewide_analytics' %}" class="text-decoration-none">
+                <div class="card bg-dark text-white shadow-sm border-0 h-100 hover-card">
+                    <div class="card-body">
+                        <h6 class="text-uppercase text-light fs-6">Total Fair Price Shops</h6>
+                        <h2 class="fw-bold mb-0 text-info">{{ total_shops_count }} Shops <i class="fa-solid fa-arrow-right-long ms-2 fs-4"></i></h2>
+                        <small class="text-warning">Click to view statewide hierarchy</small>
+                    </div>
+                </div>
+            </a>
+        </div>
+        <div class="col-md-4 mb-3">
+            <div class="card bg-primary text-white shadow-sm border-0 h-100">
+                <div class="card-body">
+                    <h6 class="text-uppercase text-light fs-6">Total State Card Holders</h6>
+                    <h2 class="fw-bold mb-0 text-warning">{{ total_state_cards|default:"0" }} Cards</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-3">
+            <div class="card bg-success text-white shadow-sm border-0 h-100">
+                <div class="card-body">
+                    <h6 class="text-uppercase text-light fs-6">Total Registered Members</h6>
+                    <h2 class="fw-bold mb-0">{{ total_state_members|default:"0" }} Members</h2>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!--  PDS Regulated Stock Table -->
+    <div class="row mb-3">
+        <div class="col-12">
+            <h4 class="fw-bold text-success"><i class="fa-solid fa-wheat-awn me-2"></i> PDS Regulated Commodities Stock</h4>
+        </div>
+    </div>
+    <div class="row mb-5">
+        <div class="col-12">
+            <div class="table-responsive shadow-sm rounded">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>Commodity Name</th>
+                            <th>Unit</th>
+                            <th>Total State Required Stock</th>
+                            <th>Total State Physical Stock</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in pds_stocks %}
+                        <tr>
+                            <td class="fw-bold">{{ item.commodity__commodity }}</td>
+                            <td>{{ item.commodity__unit }}</td>
+                            <td><span class="fw-bold text-primary fs-6">{{ item.total_required_stock|default:"0.00" }} {{ item.commodity__unit }}</span></td>
+                            <td><span class="fw-bold text-success fs-6">{{ item.total_state_stock|default:"0.00" }} {{ item.commodity__unit }}</span></td>
+                        </tr>
+                        {% empty %}
+                        <tr><td colspan="4" class="text-center py-3 text-muted">No PDS stock records found.</td></tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!--  Non-PDS Stock Table -->
+    <div class="row mb-3">
+        <div class="col-12">
+            <h4 class="fw-bold text-warning"><i class="fa-solid fa-basket-shopping me-2"></i> Non-PDS Commodities Stock</h4>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-12">
+            <div class="table-responsive shadow-sm rounded">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>Commodity Name</th>
+                            <th>Unit</th>
+                            <th>Total State Required Stock</th>
+                            <th>Total State Physical Stock</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in non_pds_stocks %}
+                        <tr>
+                            <td class="fw-bold">{{ item.commodity__commodity }}</td>
+                            <td>{{ item.commodity__unit }}</td>
+                            <td><span class="fw-bold text-primary fs-6">{{ item.total_required_stock|default:"0.00" }} {{ item.commodity__unit }}</span></td>
+                            <td><span class="fw-bold text-success fs-6">{{ item.total_state_stock|default:"0.00" }} {{ item.commodity__unit }}</span></td>
+                        </tr>
+                        {% empty %}
+                        <tr><td colspan="4" class="text-center py-3 text-muted">No Non-PDS stock records found.</td></tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

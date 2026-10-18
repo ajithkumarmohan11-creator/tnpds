@@ -1,0 +1,108 @@
+{% extends 'common/base_home_page.html' %}
+
+{% block content %}
+<div class="container mt-4 mb-5">
+    <div class="row mb-4">
+        <div class="col-12">
+            <h2 class="text-primary fw-bold">
+                <i class="fa-solid fa-truck-fast me-2"></i> Statewide PDS Dispatch Approval & Customization
+            </h2>
+            <p class="text-muted">Review statewide required stocks, customize buffer percentages, and approve final dispatch allocations.</p>
+        </div>
+    </div>
+
+    <form method="POST">
+        {% csrf_token %}
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="table-responsive shadow-sm rounded">
+                    <table class="table table-hover align-middle mb-0 bg-white">
+                        <thead class="table-dark">
+                            <tr>
+                                <th>Commodity Name</th>
+                                <th>Unit</th>
+                                <th>Total State Required Stock</th>
+                                <th>Total State Physical Stock</th>
+                                <th>Buffer Stock (%)</th>
+                                <th>Customized Dispatch Qty</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for item in pds_stocks %}
+                            {% with net_req=item.total_required_stock|default:0.00 phys=item.total_state_stock|default:0.00 %}
+                            <tr>
+                                <td class="fw-bold">{{ item.commodity__commodity }}</td>
+                                <td>{{ item.commodity__unit }}</td>
+                                <td><span class="text-primary fw-bold req-stock-{{ item.commodity__id }}">{{ net_req }}</span></td>
+                                <td><span class="text-success fw-bold phys-stock-{{ item.commodity__id }}">{{ phys }}</span></td>
+                                <td>
+                                    <!--  Buffer Input with Live Calculation on Input -->
+                                    <input type="number" step="0.01" name="buffer_{{ item.commodity__id }}" id="buffer_{{ item.commodity__id }}" value="00.00" class="form-control form-control-sm buffer-input" data-id="{{ item.commodity__id }}" style="width: 100px;" required>
+                                </td>
+                                <td>
+                                    <!--  Dispatch Qty automatically calculated with 5% default buffer -->
+                                    {% widthratio net_req 1 105 as default_dispatch %}
+                                    <input type="number" step="0.001" name="dispatch_qty_{{ item.commodity__id }}" id="dispatch_{{ item.commodity__id }}" value="{{ net_req|floatformat:2 }}" class="form-control form-control-sm" style="width: 130px;" required>
+                                </td>
+                            </tr>
+                            {% endwith %}
+                            {% empty %}
+                            <tr><td colspan="6" class="text-center py-3 text-muted">No PDS commodities found for dispatch approval.</td></tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-12 text-end">
+                <button type="submit" class="btn btn-success fw-bold px-4 py-2 shadow-sm"">
+                    <i class="fa-solid fa-check-circle me-2"></i> Approve for Dispatch & Save Audit
+                </button>
+            </div>
+        </div>
+    </form>
+</div>
+
+<!--  Live Calculation Script -->
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const bufferInputs = document.querySelectorAll('.buffer-input');
+        
+        bufferInputs.forEach(input => {
+            const commId = input.getAttribute('data-id');
+            const reqStockEl = document.querySelector(`.req-stock-${commId}`);
+            const physStockEl = document.querySelector(`.phys-stock-${commId}`);
+            const dispatchInput = document.querySelector(`#dispatch_${commId}`);
+            
+            calculateDispatch(input, reqStockEl, physStockEl, dispatchInput);
+
+            input.addEventListener('input', function() {
+                calculateDispatch(this, reqStockEl, physStockEl, dispatchInput);
+            });
+        });
+
+        function calculateDispatch(bufferInput, reqStockEl, physStockEl, dispatchInput) {
+            const reqStock = parseFloat(reqStockEl.innerText) || 0.0;
+            const physStock = parseFloat(physStockEl.innerText) || 0.0;
+            const bufferPct = parseFloat(bufferInput.value) || 0.0;
+            
+            // Net Requirement = Required - Physical
+            let netReq = reqStock - physStock;
+            if (netReq < 0) {
+                netReq = 0.0;
+            }
+            
+            // Dispatch Qty = Net + ( reqStock * Buffer%)
+            let dispatchQty = 0.0;
+            if (netReq > 0) {
+                dispatchQty = netReq + ( reqStock * (bufferPct / 100.0));
+            }
+            
+            dispatchInput.value = dispatchQty.toFixed(2);
+        }
+    });
+</script>
+</script>
+{% endblock %}

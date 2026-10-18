@@ -1,0 +1,61 @@
+{% extends 'common/base_home_page.html' %}
+{% block content %}
+<div class="container-fluid mt-4">
+    <div class="row mb-3">
+        <div class="col-md-12">
+            <h2>Consumer CRUD & Audit History</h2>
+            <p class="text-muted">Track all approved/rejected changes, updates, and member modifications across ration cards.</p>
+        </div>
+    </div>
+
+    <!-- Search Form -->
+    <div class="card shadow-sm border-0 mb-4">
+        <div class="card-body">
+            <form method="GET" class="row g-3">
+                <div class="col-md-10">
+                    <input type="text" name="q" value="{{ search_query }}" class="form-control" placeholder="Search by Ration Card Number or Aadhaar Number...">
+                </div>
+                <div class="col-md-2 d-grid">
+                    <button type="submit" class="btn btn-primary">Search History</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- History Table -->
+    <div class="card shadow-sm border-0">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>Timestamp</th>
+                            <th>Card Number</th>
+                            <th>Action Type</th>
+                            <th>Description / Remarks</th>
+                            <th>Performed By Officer</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for hist in history_list %}
+                        <tr>
+                            <td>{{ hist.timestamp|date:"d M Y, h:i A" }}</td>
+                            <td><strong>{{ hist.card_number }}</strong></td>
+                            <td>
+                                <span class="badge bg-secondary">{{ hist.action_type }}</span>
+                            </td>
+                            <td>{{ hist.description }}</td>
+                            <td>{{ hist.performed_by_officer.name|default:"System / Admin" }}</td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="5" class="text-center py-4 text-muted">No audit history records found matching your search.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

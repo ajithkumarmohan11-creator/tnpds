@@ -1,0 +1,111 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ta">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    
+    <title>{% block title %}TNPDS Portal{% endblock %}</title>
+    
+    <!-- Bootstrap 5 & FontAwesome -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <link rel="stylesheet" href="{% static 'css/login_style.css' %}">
+
+   
+ 
+</head>
+<body>
+
+<div id="logoOverlay" onclick="closeLogoPopup()">
+    <div class="popup-wrapper" onclick="event.stopPropagation();">
+        <i class="fa-solid fa-xmark close-popup-btn" onclick="closeLogoPopup()"></i>
+        <img src="{% static 'images/tnpds_logo.jpg' %}" id="popupLogo" alt="TNPDS Official Logo">
+    </div>
+</div>
+
+<div class="split-layout"> 
+    <!-- 1. Left side: Dynamic slider -->
+    <div class="slider-column">
+        {% for slide in photos %}
+            <div class="family-slide {% if forloop.first %}active{% endif %}" 
+                 style="background-image: url('{{ slide.photo.url }}');">
+            </div>
+        {% endfor %}
+        
+        <div class="slider-overlay"></div>
+
+        <div class="slider-tagline" id="taglineBox">
+            {% with first_slide=photos.0 %}
+                <span class="tagline-badge" id="slideBadge">
+                    {{ first_slide.badge_text|safe }}
+                </span>
+                <h3 id="slideTitle">{{ first_slide.quote_text|safe }}</h3>
+                <p class="tagline-subtext" id="slideSubtext">
+                    {{ first_slide.subtext }}
+                </p>
+            {% endwith %}
+        </div>
+    </div>
+
+    <!-- 2. On the right: The area where the form for the respective page will appear -->
+    <div class="auth-column">
+        {% block content %}
+        {% endblock %}
+    </div>
+</div>
+
+<script>
+
+    console.log("Django Data Length:", "{{ photos|length }}");
+
+    const slideData = [
+        {% for slide in photos %}
+            { 
+                badge: '{{ slide.badge_text|escapejs }}', 
+                title: '{{ slide.quote_text|escapejs }}',
+                subtext: '{{ slide.subtext|escapejs }}'
+            }{% if not forloop.last %},{% endif %}
+        {% endfor %}
+    ];
+
+    function closeLogoPopup() {
+        document.getElementById("logoOverlay").classList.remove("show");
+    }
+
+</script>
+
+<script src="{% static 'js/slider.js' %}"></script>
+
+<script src="{% static 'js/common_function.js' %}"></script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        setTimeout(function () {
+            const alertElements = document.querySelectorAll(".alert, .messages, #alert-messages-box, .message-container, .message-item");
+
+            if (alertElements.length > 0) {
+                alertElements.forEach(function (alert) {
+                    alert.style.transition = "opacity 0.6s ease, transform 0.6s ease";
+                    alert.style.opacity = "0";
+                    alert.style.transform = "translateY(-10px)";
+
+                    setTimeout(function () {
+                        alert.remove();
+                    }, 600);
+                });
+            }
+        }, 5000); // 5 seconds timeout
+    });
+</script>
+
+
+</body>
+</html>
+
+

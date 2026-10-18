@@ -1,0 +1,37 @@
+{% extends 'common/base_home_page.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="card shadow-sm mx-auto" style="max-width: 480px; border-radius: 12px;">
+        <div class="card-header bg-dark text-white text-center py-3">
+            <h4 class="mb-0 fw-bold">Admin Profile</h4>
+        </div>
+        <div class="card-body p-4 text-center">
+            <div class="mb-3">
+                <div class="rounded-circle bg-secondary d-inline-flex align-items-center justify-content-center text-white" style="width: 70px; height: 70px; font-size: 30px;">
+                    👤
+                </div>
+            </div>
+            
+            <table class="table table-bordered text-start mt-3">
+                <tbody>
+                    <tr>
+                        <th class="w-40">Admin ID</th>
+                        <td><span class="badge bg-primary fs-6">{{ admin_id }}</span></td>
+                    </tr>
+                    <tr>
+                        <th>Mobile Number</th>
+                        <td><strong>{{ admin_mobile }}</strong></td>
+                    </tr>
+                </tbody>
+            </table>
+            
+            <div class="mt-4">
+                <a href="{% url 'admin_home_page' %}" class="btn btn-primary px-4">
+                    ← Back to Home
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

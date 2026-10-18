@@ -1,0 +1,94 @@
+{% block title %} Monthly Ration Entitlement {% endblock %}
+{% block content %}
+<div class="container py-4">
+    <!-- Header & Family Summary Card -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card shadow-sm border-0 rounded-4 bg-primary text-white p-4">
+                <div class="row align-items-center">
+                    <div class="col-md-8">
+                        <h4 class="fw-bold mb-1"><i class="fa-solid fa-basket-shopping me-2"></i>My Monthly Ration Entitlement</h4>
+                        <p class="mb-0 text-white-50 small">Based on your Ration Card Type and Registered Family Members</p>
+                    </div>
+                    <div class="col-md-4 text-md-end mt-3 mt-md-0">
+                        <span class="badge bg-light text-primary px-3 py-2 fw-bold fs-6 rounded-pill">
+                            Card: {{ result.card_type|upper }}
+                        </span>
+                    </div>
+                </div>
+                <hr class="border-light opacity-25 my-3">
+                <div class="row text-center text-md-start">
+                    <div class="col-6 col-md-4 mb-2 mb-md-0">
+                        <span class="small text-white-50 d-block">Adult Members</span>
+                        <h5 class="fw-bold mb-0">{{ result.adult_count }}</h5>
+                    </div>
+                    <div class="col-6 col-md-4 mb-2 mb-md-0">
+                        <span class="small text-white-50 d-block">Child Members</span>
+                        <h5 class="fw-bold mb-0">{{ result.child_count }}</h5>
+                    </div>
+                    <div class="col-12 col-md-4 text-md-end">
+                        <a href="{% url 'consumer_profile' %}" class="btn btn-light btn-sm fw-semibold rounded-pill px-3 text-primary">
+                            <i class="fa-solid fa-user-pen me-1"></i> Update Members
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Allocations Table -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card shadow-sm border-0 rounded-4">
+                <div class="card-header bg-white py-3">
+                    <h5 class="fw-bold text-dark mb-0 text-uppercase" style="font-size: 1.1rem;">Eligible Commodity Quota</h5>
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle mb-0">
+                            <thead class="table-light text-secondary text-uppercase small text-center">
+                                <tr>
+                                    <th style="width: 60px;">S.No</th>
+                                    <th class="text-start" style="min-width: 200px;">Commodity Name</th>
+                                    <th style="width: 130px;">Group</th>
+                                    <th style="width: 120px;">Min Qty</th>
+                                    <th style="width: 120px;">Card Max Qty</th>
+                                    <th style="width: 150px;" class="text-success">Final Entitlement</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for item in result.allocations %}
+                                <tr>
+                                    <td class="text-center text-muted fw-bold">{{ forloop.counter }}</td>
+                                    <td class="fw-bold text-dark text-capitalize">
+                                        {{ item.commodity.commodity }} <small class="text-muted">({{ item.commodity.unit }})</small>
+                                    </td>
+                                    <td class="text-center">
+                                        {% if item.group_name and item.group_name != 'None' %}
+                                            <span class="badge bg-secondary-subtle text-secondary px-2 py-1">{{ item.group_name }}</span>
+                                        {% else %}
+                                            <span class="text-muted small">-</span>
+                                        {% endif %}
+                                    </td>
+                                    <td class="text-center text-muted">{{ item.min_qty }}</td>
+                                    <td class="text-center text-danger fw-semibold">{{ item.card_max_qty }}</td>
+                                    <td class="text-center">
+                                        <span class="badge bg-success-subtle text-success fs-6 px-3 py-2 fw-bold">
+                                            {{ item.entitlement }} {{ item.commodity.unit }}
+                                        </span>
+                                    </td>
+                                </tr>
+                                {% empty %}
+                                <tr>
+                                    <td colspan="6" class="text-center py-4 text-muted">No entitlements found for this card type.</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

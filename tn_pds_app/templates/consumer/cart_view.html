@@ -1,4 +1,4 @@
-{% extends 'consumer/consumer_home_page.html' %}
+{% extends 'common/base_home_page.html' %}
 
 {% block content %}
 <div class="container my-5">
@@ -32,7 +32,7 @@
                                      id="qty-box-{{ item.commodity.id }}" 
                                      style="background-color: rgb(224, 193, 37); border-radius: 6px; padding: 2px;">
 
-                                    <button type="button" class="btn btn-danger btn-sm fw-bold cart-minus-btn" style="width: 32px;" data-id="{{ item.commodity.id }}">−</button>
+                                    <button type="button" class="btn btn-danger btn-sm fw-bold cart-minus-btn" style="width: 32px;" data-id="{{ item.commodity.id }}">-</button>
                                     
                                     <span class="fw-bold fs-6 qty-count text-center flex-grow-1" id="cart-qty-val-{{ item.commodity.id }}">
                                         {{ item.quantity }}
@@ -79,13 +79,17 @@
                     <hr>
                     <div class="d-flex justify-content-between mb-4">
                         <h5 class="fw-bold text-dark">Total Amount</h5>
-                        <h4 class="fw-bold text-success">₹{{ total_price }}</h4>
+                        <h4 class="fw-bold text-success">₹{{ total_amount }}</h4>
                     </div>
 
                     {% if cart_items %}
-                        <button class="btn btn-warning w-100 fw-bold py-2 shadow-sm" style="font-size: 16px; border-radius: 8px;">
-                            PROCEED TO CHECKOUT
-                        </button>
+                        <div class="d-grid gap-2 mt-3">
+                                <a href="{% url 'checkout_bill' %}" 
+                                    class="btn btn-warning w-100 fw-bold py-2 text-uppercase shadow-sm d-flex align-items-center justify-content-center text-decoration-none" 
+                                    style="font-size: 15px; border-radius: 8px; letter-spacing: 0.5px;">
+                                 PROCEED TO CHECKOUT
+                                 </a>
+                         </div>
                     {% endif %}
                 </div>
             </div>

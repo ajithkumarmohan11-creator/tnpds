@@ -1,0 +1,160 @@
+{% extends 'common/base_home_page.html' %}
+
+{% block content %}
+<div class="container mt-4 mb-5">
+    <!-- Header -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <h2 class="text-primary fw-bold">
+                <i class="fa-solid fa-chart-pie me-2"></i> TNPDS Statewide & District Analytics Dashboard
+            </h2>
+            <p class="text-muted">Hierarchical filtering for stock planning, card holders, and commodity requirements.</p>
+        </div>
+    </div>
+
+    <!--  Hierarchy Filter Form -->
+    <div class="card shadow-sm border-0 mb-4 bg-light">
+        <div class="card-body">
+            <form method="GET" action="" class="row g-3 align-items-end">
+                <div class="col-md-3">
+                    <label class="form-label fw-bold">District</label>
+                    <select name="district" class="form-select" onchange="this.form.submit()">
+                        <option value="">-- All Districts --</option>
+                        {% for d in districts %}
+                        <option value="{{ d.id }}" {% if selected_district == d.id|stringformat:"s" %}selected{% endif %}>{{ d.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label fw-bold">Taluk</label>
+                    <select name="taluk" class="form-select" onchange="this.form.submit()">
+                        <option value="">-- All Taluks --</option>
+                        {% for t in taluks %}
+                        <option value="{{ t.id }}" {% if selected_taluk == t.id|stringformat:"s" %}selected{% endif %}>{{ t.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label fw-bold">Village / Town</label>
+                    <select name="village" class="form-select" onchange="this.form.submit()">
+                        <option value="">-- All Villages --</option>
+                        {% for v in villages %}
+                        <option value="{{ v.id }}" {% if selected_village == v.id|stringformat:"s" %}selected{% endif %}>{{ v.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label fw-bold">Fair Price Shop</label>
+                    <select name="shop" class="form-select" onchange="this.form.submit()">
+                        <option value="">-- All Shops --</option>
+                        {% for s in all_shops %}
+                        <option value="{{ s.shop_id }}" {% if selected_shop == s.shop_id|stringformat:"s" %}selected{% endif %}>{{ s.name }} ({{ s.shop_id }})</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-12 text-end mt-2">
+                    <a href="{% url 'admin_statewide_analytics' %}" class="btn btn-outline-danger btn-sm">
+                        <i class="fa-solid fa-rotate-left me-1"></i> Reset Filters
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Summary Cards -->
+    <div class="row mb-4">
+        <div class="col-md-3 mb-3">
+            <div class="card bg-dark text-white shadow-sm border-0">
+                <div class="card-body">
+                    <h6>Selected Shops Count</h6>
+                    <h3 class="fw-bold text-info mb-0">{{ total_shops }} Shops</h3>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-3">
+            <div class="card bg-primary text-white shadow-sm border-0">
+                <div class="card-body">
+                    <h6>Total Card Holders</h6>
+                    <h3 class="fw-bold text-warning mb-0">{{ total_cards }} Cards</h3>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-3">
+            <div class="card bg-success text-white shadow-sm border-0">
+                <div class="card-body">
+                    <h6>Total Members</h6>
+                    <h3 class="fw-bold mb-0">{{ total_members }} Members</h3>
+                    <small>Adults: {{ total_adults }} | Children: {{ total_children }}</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-3">
+            <div class="card bg-secondary text-white shadow-sm border-0">
+                <div class="card-body">
+                    <h6>Card Types Breakdown</h6>
+                    {% for c_type, data in card_type_breakdown.items %}
+                    <small class="d-block"><strong>{{ c_type|upper }}:</strong> {{ data.cards }} Cards ({{ data.members }} Mem)</small>
+                    {% empty %}
+                    <small class="text-light">No cards found</small>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!--  Commodity Stock & Requirements Table (Planning & Shortage view) -->
+    <div class="row mb-3">
+        <div class="col-12">
+            <h4 class="fw-bold text-dark"><i class="fa-solid fa-warehouse me-2"></i> Commodity Requirements vs Available Stock (Planning View)</h4>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-12">
+            <div class="table-responsive shadow-sm rounded">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>Commodity Name</th>
+                            <th>Category</th>
+                            <th>Unit</th>
+                            <th>Total Required Stock</th>
+                            <th>Total Available Physical Stock</th>
+                            <th>Status / Deficit</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in stock_summary %}
+                        <tr>
+                            <td class="fw-bold">{{ item.commodity__commodity }}</td>
+                            <td>
+                                {% if item.commodity__is_non_pds %}
+                                    <span class="badge bg-warning text-dark">Non-PDS</span>
+                                {% else %}
+                                    <span class="badge bg-success">PDS Regulated</span>
+                                {% endif %}
+                            </td>
+                            <td>{{ item.commodity__unit }}</td>
+                            <td><span class="fw-bold text-primary">{{ item.total_required|default:"0.00" }} {{ item.commodity__unit }}</span></td>
+                            <td><span class="fw-bold text-success">{{ item.total_available|default:"0.00" }} {{ item.commodity__unit }}</span></td>
+                            <td>
+                                {% with req=item.total_required|default:0.00 avail=item.total_available|default:0.00 %}
+                                    {% if avail < req %}
+                                        <span class="badge bg-danger">Shortage / Deficit</span>
+                                    {% else %}
+                                        <span class="badge bg-success">Sufficient Stock</span>
+                                    {% endif %}
+                                {% endwith %}
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="6" class="text-center py-4 text-muted">No stock data available for the selected filter criteria.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

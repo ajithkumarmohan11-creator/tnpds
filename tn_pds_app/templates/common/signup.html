@@ -1,0 +1,176 @@
+{% extends 'common_signup_login.html' %}
+{% load static %}
+
+{% block title %}{{ title | default:'signup' }} {% endblock %}
+
+{% block content %}
+<div class="auth-card-face auth-card-front d-flex flex-column" style="position: relative; width: 100%; height: 100%; overflow: hidden;">
+    
+    <!-- 1. Top Fixed Header (Logo & Title - Never Scrolls Out) -->
+    <div class="text-center mb-3 flex-shrink-0 pt-2">
+        <img src="{% static 'images/tnpds_logo.jpg' %}" alt="TNPDS Logo" style="height: 65px; width: 65px; object-fit: cover; border-radius: 50%; box-shadow: 0 4px 10px rgba(0,0,0,0.1); cursor: pointer;" class="mb-2 mx-auto d-block" onclick="openLogoPopup()">
+        <h5 class="fw-bold text-dark mb-1" style="font-size: 1.1rem;">{{ title }}</h5>
+        <small class="text-muted" style="font-size: 0.75rem;">{{ subtitle }}</small>
+    </div>
+
+    {% if messages %}
+        <div class="flex-shrink-0">
+            {% for m in messages %}
+                <div class="alert alert-{{ m.tags|default:'warning' }} py-1 px-2 text-center small mb-2 shadow-sm" style="font-size: 0.78rem; border-radius: 8px;">
+                    <i class="fa-solid fa-circle-exclamation me-1"></i> {{ m }}
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <!-- 2. Scrollable Form Fields Area Only -->
+    <div class="flex-grow-1 overflow-y-auto px-1" style="max-height: calc(100vh - 230px);">
+        <form method="post" action="{{ url }}">
+            {% csrf_token %}
+
+            {{ form.non_field_errors }}
+
+            {% for field in form %}
+                <div class="custom-form-fields mb-2">
+                    <label class="form-label small fw-semibold text-secondary mb-1">{{ field.label }}</label>
+                    {{ field }}
+
+                    {% if field.errors %}
+                        <div class="text-danger small mt-1" style="font-size: 0.75rem;">
+                            {% for error in field.errors %}
+                                <i class="fa-solid fa-triangle-exclamation me-1"></i> {{ error }}
+                            {% endfor %}
+                        </div>
+                    {% endif %}  
+
+                </div>
+            {% endfor %}
+
+            <button type="submit" class="btn btn-success w-100 py-2 fw-bold rounded-3 shadow-sm mb-2 mt-2">
+                பதிவு செய்க (Sign Up)
+            </button>
+        </form>
+    </div>
+
+    <!-- 3. Footer Login Link (Fixed at Bottom) -->
+    <div class="text-center border-top pt-2 mt-2 flex-shrink-0">
+        <span class="small text-secondary">ஏற்கனவே கணக்கு உள்ளதா? </span>
+        <a href="{% url login_url %}" class="btn btn-link text-primary fw-bold p-0 text-decoration-none small">
+            <i class="fa-solid fa-arrow-left me-1"></i> உள்நுழைய (Login)
+        </a>
+    </div>
+</div>
+
+<script>
+    function closeLogoPopup() {
+        document.getElementById("logoOverlay").classList.remove("show");
+    }
+</script>
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    const countrySelect = document.getElementById('id_country');
+    const stateSelect = document.getElementById('id_state');
+    const districtSelect = document.getElementById('id_district');
+    const talukSelect = document.getElementById('id_taluk');
+    const villageSelect = document.getElementById('id_village');
+    const shopSelect = document.getElementById('id_shop');
+
+    // Helper function to reset dropdowns
+    function resetDropdown(selectElement, defaultText) {
+        selectElement.innerHTML = `<option value="">--- ${defaultText} ---</option>`;
+    }
+
+    // 1. Country Change -> Load States
+    countrySelect.addEventListener('change', function() {
+        const countryId = this.value;
+        resetDropdown(stateSelect, 'Select State');
+        resetDropdown(districtSelect, 'Select District');
+        resetDropdown(talukSelect, 'Select Taluk');
+        resetDropdown(villageSelect, 'Select Village / Town');
+        resetDropdown(shopSelect, 'Select Your Fair Price Shop');
+
+        if (countryId) {
+            fetch(`/ajax_get_states/?country_id=${countryId}`)
+                .then(res => res.json())
+                .then(data => {
+                    data.forEach(item => {
+                        stateSelect.innerHTML += `<option value="${item.id}">${item.name}</option>`;
+                    });
+                });
+        }
+    });
+
+    // 2. State Change -> Load Districts
+    stateSelect.addEventListener('change', function() {
+        const stateId = this.value;
+        resetDropdown(districtSelect, 'Select District');
+        resetDropdown(talukSelect, 'Select Taluk');
+        resetDropdown(villageSelect, 'Select Village / Town');
+        resetDropdown(shopSelect, 'Select Your Fair Price Shop');
+
+        if (stateId) {
+            fetch(`/ajax_get_districts/?state_id=${stateId}`)
+                .then(res => res.json())
+                .then(data => {
+                    data.forEach(item => {
+                        districtSelect.innerHTML += `<option value="${item.id}">${item.name}</option>`;
+                    });
+                });
+        }
+    });
+
+    // 3. District Change -> Load Taluks
+    districtSelect.addEventListener('change', function() {
+        const districtId = this.value;
+        resetDropdown(talukSelect, 'Select Taluk');
+        resetDropdown(villageSelect, 'Select Village / Town');
+        resetDropdown(shopSelect, 'Select Your Fair Price Shop');
+
+        if (districtId) {
+            fetch(`/ajax_get_taluks/?district_id=${districtId}`)
+                .then(res => res.json())
+                .then(data => {
+                    data.forEach(item => {
+                        talukSelect.innerHTML += `<option value="${item.id}">${item.name}</option>`;
+                    });
+                });
+        }
+    });
+
+    // 4. Taluk Change -> Load Villages
+    talukSelect.addEventListener('change', function() {
+        const talukId = this.value;
+        resetDropdown(villageSelect, 'Select Village / Town');
+        resetDropdown(shopSelect, 'Select Your Fair Price Shop');
+
+        if (talukId) {
+            fetch(`/ajax_get_villages/?taluk_id=${talukId}`)
+                .then(res => res.json())
+                .then(data => {
+                    data.forEach(item => {
+                        villageSelect.innerHTML += `<option value="${item.id}">${item.name}</option>`;
+                    });
+                });
+        }
+    });
+
+    // 5. Village Change -> Load Shops
+    villageSelect.addEventListener('change', function() {
+        const villageId = this.value;
+        resetDropdown(shopSelect, 'Select Your Fair Price Shop');
+
+        if (villageId) {
+            fetch(`/ajax_get_shops/?village_id=${villageId}`)
+                .then(res => res.json())
+                .then(data => {
+                    data.forEach(item => {
+                        shopSelect.innerHTML += `<option value="${item.shop_id}">${item.name}</option>`;
+                    });
+                });
+        }
+    });
+});
+</script>
+
+{% endblock %}

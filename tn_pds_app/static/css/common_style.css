@@ -1,250 +1,121 @@
+@import url('https://fonts.googleapis.com/css2?family=Mukta+Malar:wght@400;600;700&family=Poppins:wght@400;500;600;700&display=swap');
 
-*{
-    margin:0;
-    padding:0;
-    box-sizing:border-box;
-    font-family:Arial, Helvetica, sans-serif;
-
-
-}
-
-body{
-    background-color:#f4f6f8;
-}
-.top-navbar{
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    background-color:#fff;
-
-    padding:clamp(0.75rem,1.5vw,1rem) clamp(1rem,4vw,3rem);
-    border-top:2px solid #f3d21aec ;
-    border-bottom:3px solid #f3d21aec ;
-    flex-wrap:wrap;
-    gap: 0.75rem;
-
-
-}
-
-.navbar-logo h2{
-    color:blue;
-    letter-spacing: 1px;
-    line-height:3;
-    font-size: xx-large;
-    font-weight:600;
-    text-shadow: 1px 1px 3px yellow;
-}
-
-.navbar-logo h2:hover{
-    color:red;
-   
-}
-
-.navbar-links{
-    display:flex;
-    gap:12px;
-}
-
-.button{
-    background:none;
-    border:none;
-
-
-   
-}
-
-.navbar-button{
-    text-decoration:none;
-    color:black;
-    background-color:#ffff00;
-    padding:8px 16px;
-    border-radius: 20px;
-    font-size:15px;
-    font-weight: bold;
-    letter-spacing:0.5px;
-    border:1px solid #dcdcdc;
-    transition:all 0.2s ease;
-    text-transform:uppercase;
-}
-
-.navbar-button:hover{
-    background-color:rgb(60, 23, 206);
-    color:white;
-    /* border-color:#e41313; */
-
-}
-
-.message-container{
-    width:fit-content;
-    max-width:min(80%,500px);
-    margin:1rem auto;
-    border: 1px solid;
-    padding:0.8rem 1.2rem;
-    border-radius: 15px;
+* {
+    margin: 0;
+    padding: 0;
     box-sizing: border-box;
+    font-family: 'Poppins', 'Mukta Malar', sans-serif;
 }
 
-.message-item{
-    margin:0.4rem 0;
-    font-size: clamp(0.85rem, 2.5vw, 1.25rem);
+html {
+    min-height: 100%;
+    margin: 0;
+    overflow-y: auto !important;
+}
+
+body {
+    background-color: #f4f7fa;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto !important;
+}
+
+/* Top Helpline Bar */
+.tn-top-strip {
+    background: #0b2545;
+    font-size: 13px;
+    letter-spacing: 0.3px;
+}
+
+/* TN Govt Emblem */
+.tn-emblem {
+    height: 65px;
+    width: auto;
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));
+}
+
+.tn-title-tamil {
+    font-size: 16px;
+    color: #134074;
+}
+
+/* Clean Govt Portal Navigation Pills */
+.btn-portal-tab {
+    text-decoration: none;
+    font-size: 13px;
     font-weight: 600;
-    text-align:center;
-    word-break:break-word;
-
+    padding: 7px 15px;
+    border-radius: 8px;
+    border: 1px solid #d0d7de;
+    background: #f8fafc;
+    color: #334155;
+    transition: all 0.2s ease;
+    display: inline-flex;
+    align-items: center;
 }
 
-.message-item.success{
-    color:green;
-    /* background-color:green; */
+.btn-portal-tab:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.08);
 }
 
-.message-item.error{
-    color:red;
-    /* background-color:red; */
+.btn-consumer:hover { background: #0284c7; color: white; border-color: #0284c7; }
+.btn-shop:hover { background: #059669; color: white; border-color: #059669; }
+.btn-officer:hover { background: #d97706; color: white; border-color: #d97706; }
+.btn-admin { background: #1e293b; color: #f8fafc; border-color: #1e293b; }
+.btn-admin:hover { background: #0f172a; color: #38bdf8; }
+
+/* Hero Section with Culture & Agriculture vibe */
+.tn-hero-banner {
+    background: linear-gradient(135deg, rgba(11, 37, 69, 0.92) 0%, rgba(19, 64, 116, 0.88) 100%);
+    background-size: cover;
+    background-position: center;
+    border-bottom: 3px solid #134074;
 }
 
-.message-item.warning{
-    color:yellow;
-    /* background-color:yellow; */
+
+
+/* Card Improvements for all inner views */
+.card {
+    border: 1px solid #e2e8f0 !important;
+    border-radius: 14px !important;
+    box-shadow: 0 8px 24px rgba(149, 157, 165, 0.08) !important;
 }
 
-.message-item.info{
-    color:blue;
-    /* background-color:blue; */
+/* Django Auto-Dismiss Messages Styling */
+.message-container {
+    width: fit-content;
+    max-width: min(90%, 550px);
+    margin: 1rem auto;
+    padding: 0.75rem 1.25rem;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
 }
 
-.user{
-    color:tomato;
-    font-weight:bold;
-    text-align: center;
-    padding:20px;
-    border-bottom: yellow 3px dotted;
-    text-shadow: 1px 1px 2px  blue;
-
-
-}
-
-.user:hover{
-    color:palevioletred;
-    border-bottom: 3px red dashed;
-    text-shadow: 1px 1px 2px  blue;
-
-
-}
-
-.input input,label,a{
-    color:black;
-    padding: 10px;
-    /* border: 1px solid black; */
-    margin:10px;
-    font-size:bold;
-    font-weight: bold;
-    letter-spacing: 0.5px;
-    text-decoration:none;
-    display: block;
-    
-
-}
-
-/* .input label{
-    color:black;
-    padding: 10px;
-    margin:10px;
-} */
-
-.newuser{
-    color:red;
-    padding: 10px;
-    /* border: 1px solid black; */
-    margin:10px;
-    font-size:bold;
-    font-weight: bold;
-    letter-spacing: 0.5px;
-
-}
-
-.newuser_type{
-    color: tomato;
-    font-weight: 900;
-    font-size: x-large;
-}
-
-.input_button{
-    border-radius :25px;
-    border:1px solid black;
-    background-color: greenyellow;
-    border: solid 2px blue;
-    font-size: large;
-}
-
-.input_button:hover{
-    background-color: blue;
-    color: white;
-}
-
-.input_button a:hover{
-    background-color:blue;
-    color: white;
-}
-
-.input input{
-    border-radius: 5px;
-    border: 1px solid black;
-}
-
-/* .input_form{
-    text-align: center;
-    width: 350px;
-    margin: 50px auto;
-} */
-
-.input label{
-    color:blueviolet ;
-    font-size: large;
-    font-weight: 900;
-}
-
-.input input{
-    border-radius: 15px;
-    font-size: medium;
+.message-item {
+    margin: 0.2rem 0;
+    font-size: 0.95rem;
     font-weight: 600;
-}
-.input input:hover{
-    background-color: aqua;
-    border-radius: 15px;
-    font-size: medium;
-    font-weight: 600;
-}
-
-
-.input input,label,a{
-    color:black;
-    padding: 10px;
-    /* border: 1px solid black; */
-    margin:10px;
-    font-size:bold;
-    font-weight: bold;
-    letter-spacing: 0.5px;
-    text-decoration:none;
-    display: block;
-    
-
-}
-
-.welcome{
-    background-color: antiquewhite;
     text-align: center;
-    padding: 10px;
-    border: 5px solid yellow;
-    color: red;
-    text-shadow: 1px 1px 2px ;
-    
 }
 
-.welcome:hover{
-    background-color: aqua;
-    color: blue;
-    text-shadow: 1px 1px 2px;
+.message-item.success { color: #166534; background-color: #dcfce7; padding: 8px 16px; border-radius: 8px; }
+.message-item.error { color: #991b1b; background-color: #fee2e2; padding: 8px 16px; border-radius: 8px; }
 
-    
+.family-slide {
+    opacity: 0;
+    transition: opacity 1s ease-in-out;
+    position: absolute;
+    inset: 0;
+}
+
+.family-slide.active {
+    opacity: 1;
+    z-index: 2;
+}
+
+.text-fade {
+    opacity: 0;
+    transition: opacity 0.35s ease-in-out;
 }

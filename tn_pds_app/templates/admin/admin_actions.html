@@ -1,152 +1,223 @@
-{% extends 'admin/admin_home.html' %}
+{% extends 'admin/home.html' %}
 
 {% block title %} {{ title }} {% endblock %}
 
 {% block content %}
+<!-- Bootstrap 5 CSS -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-    <div class="input_form">
-        <div class="header">
-            <h2 class="user">{{ user |title }} {{ action |title }} Page</h2>
-        </div>
+{% load static %}
+  <link rel="stylesheet" type="text/css" href="{% static 'css/common_style.css' %}">
 
-        <header class="top-navbar">
-        <div class="navbar-logo">
-            <h2 class="title">Consumer</h2>
-        </div>
-
-        
-        <nav class="navbar-links">
-            <button class="button"><a href="#" class="navbar-button">Profile</a></button>
-            <button class="button"><a href="{% url 'consumer_product_details' %}" class="navbar-button">Shop / Purchase</a></button>
-            <button class="button"><a href="#" class="navbar-button">Griveance</a></button>
-            <button class="button"><a href="#" class="navbar-button">Feedback</a></button>
-        </nav>
-        </header>
-
-        <div>
-            <form method="post" action="{{ url }}" enctype="multipart/form-data">
-                {% csrf_token %}
-
-        
-                {% if messages %}
-                    <div class="message-container">
-                        {% for i in messages %}
-                            <p class="message-item {{ i.tags }}">{{ i }}</p>
-                        {% endfor %}
-                    </div>
-                {% endif %}  
-          
-
-                <div class="input">
-            
-                    {{ form }}
-
-                </div>
-
-                <div class="input">
-                    <input type="submit" value="{{ in_type | title }}" class="input_button">
-                </div>
-            </form>
-        </div>
-
-        <div>
-            {% if card_type  %}
-            <table>
-                <tr>
-                    <th>S.no</th>
-                    <th>{{ column_title | title }}</th>
-                    {% if commodity %}
-                        <th>Unit</th>
-                        <th>price</th>
-                    {% endif %}
-                    <th>Actions</th>
-                    
-                </tr>
-                    {% for i in card_type %}
-                    <tr>
-                        <td>{{ forloop.counter }}</td>
-                        <td>{{ i.card_type | upper }}{{ i.commodity | title }}</td>
-                        {% if commodity %}
-                            <td>{{ i.commodity.unit }}</td>
-                        {% endif %}    
-
-
-
-                        {% if all_card_type %}
-                            <td><button class='input_button' ><a href="{% url 'admin_commodity_allocation' i.id %}"  >Allocate commadities</a></button></td>
-                            <td><button class='input_button' ><a href="{% url 'admin_delete_card_type' i.id %}">Delete</a></button>
-                        {% elif commodity %}
-                            <td>{{ i.price}}</td>
-                            <td><button class='input_button' ><a href="{% url 'admin_edit_commodity' i.id %}">Edit/Update</a></button></td>
-                            <td><button class='input_button' ><a href="{% url 'admin_delete_commodity' i.id %}">Delete</a></button></td>
-                        {% endif %}    
-
-
-
-                    </tr>
-                    {% endfor %} 
-
-
-            </table>
-        </div>
-        {% endif %}
-        </div>
-    <div>
     
+    <link rel="stylesheet" type="text/css" href="{% static 'js/common_function.js' %}">
 
+<div class="container py-4">
 
-    {% comment %} <div class="input">
-        {% if new_user %}
-            <p class="newuser">{{ new_user }}</p>
-            <button class="input_button"><a href="{{ new_user_url }}">SignIn</a></button>
-        {% endif %}
-    </div> {% endcomment %}
+    <!-- Page Title Header -->
+    <div class="text-center mb-4">
+        <h3 class="fw-bold text-dark text-uppercase tracking-wide">
+            {{ user | title }} {{ action | title }} Page
+        </h3>
+        <p class="text-muted small">Manage card categories and their commodity allocations</p>
     </div>
-      
-   
 
-
-<div>
-    {% if data  %}
-
-        <div style="display: flex; flex-wrap: wrap; gap: 24px; padding: 25px;">
-            {% for item in data %}
-        
-            <div class="cardj shadow-sm" style="width: 260px; border-radius: 12px; overflow: hidden; border: 1px solid #e0e0e0; background: #fff;">
-            
-                <div style="height: 170px; background-color: #fff; display: flex; align-items: center; justify-content: center; padding: 12px; border-bottom: 1px solid #f1f1f1;">
-                
-                {% if item.commodity_image %}
-                    <img src="{{ item.commodity_image.url }}" 
-                        alt="{{ item.commodity }}" 
-                        style="max-height: 100%; max-width: 100%; object-fit: contain;">
-            {% else %}
-                    <img src="#" 
-                        alt="{{ item.commodity }}" 
-                        style="max-height: 100%; max-width: 100%; object-fit: contain;">
-               
-            {% endif %}        
+    <!-- Django Messages Display -->
+    {% if messages %}
+        <div id="alert-messages-box" class="row justify-content-center mb-3">
+            <div class="col-md-8 col-lg-6">
+                {% for i in messages %}
+                    <div class="alert alert-{{ i.tags|default:'info' }} text-center py-2 mb-2 rounded-3 shadow-sm small">
+                        {{ i }}
+                    </div>
+                {% endfor %}
+            </div>
         </div>
-                <div class="card-body text-center p-3">
-                    <h2 class="card-title text-primary fw-bold text-capitalize mb-2">{{ item.commodity }}</h2>
-                    <h3 class="card-text text-success fw-bold mb-3">Price: ₹{{ item.price }} / {{ item.unit }}</h3>
-                    
-                    <div class="cart-action-container mx-auto">
-                        <a  class="btn btn-warning fw-bold add-btn w-100 " href="{% url 'admin_edit_commodity' item.id %}">Edit / Update</a>
+    {% endif %}
 
-                        <a  class="btn btn-danger fw-bold add-btn w-100 " href="{% url 'admin_delete_commodity' item.id %}">Delete</a>
-
-                           
-
-                    </div> 
-
+    <!-- 1. Add Card Type Form Box -->
+    <div class="row justify-content-center mb-5">
+        <div class="col-md-8 col-lg-6">
+            <div class="card shadow-sm border-0 rounded-4 overflow-hidden">
+                <div class="card-header bg-primary text-white py-3 text-center">
+                        <h5 class="fw-bold mb-0 text-capitalize">
+                            <i class="fa-solid fa-pen-to-square me-2"></i>{{ action }}
+                        </h5>
                 </div>
+                <div class="card-body p-4 bg-white">
+                    <form method="post" action="{{ url }}" enctype="multipart/form-data">
+                        {% csrf_token %}
+
+                        <div class="mb-3 custom-admin-form">
+                            {{ form }}
+                        </div>
+
+                        <div class="d-grid mt-4">
+                            <button type="submit" class="btn btn-primary fw-bold py-2 rounded-pill shadow-sm">
+                                <i class="fa-solid fa-plus-circle me-1"></i> {{ in_type | title }}
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 2. Existing Card Types Table -->
+    {% if card_type %}
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <div class="card shadow-sm border-0 rounded-4 overflow-hidden">
+                <div class="card-header bg-light py-3 d-flex justify-content-between align-items-center">
+                    <h6 class="fw-bold text-secondary text-uppercase mb-0">
+                        Existing Card Types & Allocations
+                    </h6>
+                    <span class="badge bg-primary rounded-pill px-3 py-2">Total: {{ card_type|length }}</span>
                 </div>
                 
-        {% endfor %} 
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0 text-center">
+                        <thead class="table-light text-secondary small text-uppercase">
+                            <tr>
+                                <th style="width: 80px;">S.No</th>
+                                <th class="text-start">{{ column_title | title }}</th>
+                                {% if commodity %}
+                                    <th>Unit</th>
+                                    <th>Price</th>
+                                {% endif %}
+                                <th style="width: 320px;">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for i in card_type %}
+                            <tr>
+                                <td class="text-muted fw-bold">{{ forloop.counter }}</td>
+                                <td class="text-start">
+                                    <span class="badge bg-info-subtle text-info-emphasis border border-info-subtle px-3 py-2 fs-6 fw-bold">
+                                        {{ i.card_type | upper }}{{ i.commodity | title }}
+                                    </span>
+                                </td>
 
-    {% endif %}    
+                                {% if commodity %}
+                                    <td>{{ i.commodity.unit }}</td>
+                                    <td class="fw-bold">₹{{ i.price }}</td>
+                                {% endif %}
 
+                                <td>
+                                    {% if all_card_type %}
+                                        <div class="d-flex justify-content-center gap-2">
+                                            <a href="{% url 'admin_commodity_allocation' i.id %}" class="btn btn-outline-primary btn-sm fw-semibold px-3 rounded-pill">
+                                                <i class="fa-solid fa-boxes-stacked me-1"></i> Allocate Commodities
+                                            </a>
+                                            <a href="{% url 'admin_delete_card_type' i.id %}" 
+                                               class="btn btn-outline-danger btn-sm fw-semibold px-3 rounded-pill"
+                                               onclick="return confirm('Are you sure you want to delete this card type?');">
+                                                <i class="fa-solid fa-trash me-1"></i> Delete
+                                            </a>
+                                        </div>
+                                    {% elif commodity %}
+                                        <div class="d-flex justify-content-center gap-2">
+                                            <a href="{% url 'admin_edit_commodity' i.id %}" class="btn btn-warning btn-sm fw-semibold px-3 rounded-pill">
+                                                <i class="fa-solid fa-pen-to-square me-1"></i> Edit
+                                            </a>
+                                            <a href="{% url 'admin_delete_commodity' i.id %}" class="btn btn-danger btn-sm fw-semibold px-3 rounded-pill" onclick="return confirm('Delete item?');">
+                                                <i class="fa-solid fa-trash me-1"></i> Delete
+                                            </a>
+                                        </div>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
 
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+        {% if commodity and item %}
+            <!-- Current Image & Live Preview Box -->
+            <div class="text-center mb-3 p-3 bg-light rounded-3 border">
+                <label class="form-label small fw-bold text-secondary d-block mb-2">Image Preview</label>
+                <div class="d-flex justify-content-center align-items-center gap-3">
+                    <div class="border rounded-3 p-2 bg-white shadow-sm" style="width: 110px; height: 110px; display: flex; align-items: center; justify-content: center;">
+                        {% if item.commodity_image %}
+                            <img id="image-preview" src="{{ item.commodity_image.url }}" alt="{{ item.commodity }}" style="max-height: 100%; max-width: 100%; object-fit: contain;">
+                        {% else %}
+                            <img id="image-preview" src="" alt="No Image" class="d-none" style="max-height: 100%; max-width: 100%; object-fit: contain;">
+                            <i id="default-icon" class="fa-solid fa-image fa-2x text-muted"></i>
+                        {% endif %}
+                    </div>
+                </div>
+                <small class="text-muted d-block mt-2" id="preview-text">
+                    {% if item.commodity_image %}Current product image{% else %}No image uploaded{% endif %}
+                </small>
+            </div>
+        {% endif %}
+
+</div>
+
+<!-- Auto-Styler for Django Forms Inputs -->
+<style>
+    .custom-admin-form p {
+        margin-bottom: 1rem !important;
+    }
+    .custom-admin-form label {
+        display: block !important;
+        font-weight: 600 !important;
+        font-size: 0.9rem !important;
+        color: #334155 !important;
+        margin-bottom: 0.4rem !important;
+    }
+    .custom-admin-form input,
+    .custom-admin-form select {
+        display: block !important;
+        width: 100% !important;
+        padding: 0.65rem 0.9rem !important;
+        font-size: 0.95rem !important;
+        background-color: #f8fafc !important;
+        border: 1.5px solid #cbd5e1 !important;
+        border-radius: 8px !important;
+        box-sizing: border-box !important;
+        transition: all 0.2s ease !important;
+    }
+    .custom-admin-form input:focus,
+    .custom-admin-form select:focus {
+        background-color: #fff !important;
+        border-color: #0d6efd !important;
+        outline: none !important;
+        box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.15) !important;
+    }
+</style>
+
+<script>
+
+    document.addEventListener('DOMContentLoaded', function () {
+    const fileInput = document.querySelector('input[type="file"]');
+    const previewImg = document.getElementById('image-preview');
+    const defaultIcon = document.getElementById('default-icon');
+    const previewText = document.getElementById('preview-text');
+
+    if (fileInput && previewImg) {
+        fileInput.addEventListener('change', function () {
+            const file = this.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    previewImg.src = e.target.result;
+                    previewImg.classList.remove('d-none');
+                    if (defaultIcon) defaultIcon.classList.add('d-none');
+                    if (previewText) previewText.innerText = "New selected image (preview)";
+                }
+                reader.readAsDataURL(file);
+            }
+        });
+    }
+});
+
+</script>
 
 {% endblock %}

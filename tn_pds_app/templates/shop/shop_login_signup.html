@@ -1,0 +1,129 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ta">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>கடைப் பணியாளர் - TNPDS</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body, html { height: 100%; margin: 0; font-family: 'Segoe UI', Arial, sans-serif; overflow: hidden; }
+        .split-layout { display: flex; width: 100vw; height: 100vh; }
+        .slider-column { flex: 1; position: relative; background-color: #064e3b; overflow: hidden; }
+        .family-slide { position: absolute; inset: 0; background-size: cover; background-position: center top !important; opacity: 0; transition: opacity 1.2s ease-in-out, transform 6s ease-out; transform: scale(1); }
+        .family-slide.active { opacity: 1; transform: scale(1.03); }
+        .slider-overlay { position: absolute; inset: 0; background: linear-gradient(to top, rgba(0, 0, 0, 0.85) 0%, rgba(0, 0, 0, 0.25) 32%, rgba(0, 0, 0, 0) 65%); z-index: 2; }
+        
+        .slider-tagline { position: absolute; bottom: 3rem; left: 3rem; z-index: 3; max-width: 550px; }
+        .tagline-badge { display: inline-block; background: linear-gradient(135deg, #22c55e, #16a34a); color: #ffffff; font-size: 0.88rem; font-weight: 800; padding: 5px 15px; border-radius: 50px; margin-bottom: 0.8rem; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.6); }
+        .slider-tagline h3 { color: #ffffff; font-weight: 800; font-size: clamp(1.25rem, 1.6vw, 1.55rem); line-height: 1.45; margin-bottom: 0.5rem; text-shadow: 0 2px 8px rgba(0, 0, 0, 0.95); }
+        
+        .auth-column { width: 430px; background-color: #f8fafc; box-shadow: -5px 0 25px rgba(0, 0, 0, 0.05); display: flex; align-items: center; justify-content: center; padding: 2rem; position: relative; z-index: 10; }
+        .card-flipper { width: 100%; max-width: 380px; min-height: 560px; position: relative; transform-style: preserve-3d; transition: transform 0.8s cubic-bezier(0.4, 0.2, 0.2, 1); }
+        .card-flipper.flipped { transform: rotateY(180deg); }
+        .auth-card-face { position: absolute; inset: 0; background: #ffffff; border: 1px solid #e2e8f0; border-radius: 16px; padding: 2.2rem 1.8rem; box-shadow: 0 10px 35px rgba(0, 0, 0, 0.08); backface-visibility: hidden; display: flex; flex-direction: column; justify-content: center; }
+        .auth-card-back { transform: rotateY(180deg); }
+
+        .custom-form-fields label { display: block !important; font-weight: 600 !important; font-size: 0.82rem !important; color: #334155 !important; margin-bottom: 0.2rem !important; }
+        .custom-form-fields input { display: block !important; width: 100% !important; padding: 0.5rem 0.75rem !important; font-size: 0.88rem !important; border: 1.5px solid #cbd5e1 !important; border-radius: 8px !important; background: #f8fafc !important; }
+        .custom-form-fields input:focus { background: #ffffff !important; border-color: #16a34a !important; box-shadow: 0 0 0 3px rgba(22, 163, 74, 0.1); }
+    </style>
+</head>
+<body>
+
+<div class="split-layout">
+    <div class="slider-column">
+        <div class="family-slide active" style="background-image: url('{% static "images/tnpds.jpg" %}');"></div>
+        <div class="slider-overlay"></div>
+        <div class="slider-tagline">
+            <span class="tagline-badge"><i class="fa-solid fa-scale-balanced me-1"></i> கடைப் பணியாளர் தளம்</span>
+            <h3>“சரியான எடை, தரமான பொருட்கள் — மக்களின் நம்பிக்கையே நமது வெற்றி.”</h3>
+        </div>
+    </div>
+
+    <div class="auth-column">
+        <div class="card-flipper" id="authFlipper">
+            
+            <!-- Front: LOGIN -->
+            <div class="auth-card-face auth-card-front">
+                <div class="text-center mb-4">
+                    <img src="{% static 'images/tnpds_logo.jpg' %}" alt="TNPDS Logo" style="height: 75px; width: 75px; object-fit: cover; border-radius: 50%; box-shadow: 0 4px 10px rgba(0,0,0,0.1);" class="mb-3 mx-auto d-block">
+                    <h5 class="fw-bold text-dark mb-1">பணியாளர் உள்நுழைவு</h5>
+                    <small class="text-muted">Shop Worker Login</small>
+                </div>
+
+                {% if messages %}
+                    {% for m in messages %}
+                        <div class="alert alert-{{ m.tags|default:'warning' }} py-2 px-2 text-center small mb-3 shadow-sm" style="border-radius: 8px;">{{ m }}</div>
+                    {% endfor %}
+                {% endif %}
+
+                <form method="post" action="{% url 'shop_worker_login' %}">
+                    {% csrf_token %}
+                    <div class="custom-form-fields mb-3">
+                        <label>பணியாளர் ஐடி (Worker ID)</label>
+                        <input type="text" name="shop_worker_id" placeholder="Worker ID" required>
+                    </div>
+                    <div class="custom-form-fields mb-3">
+                        <label>கடவுச்சொல்</label>
+                        <input type="password" name="password" placeholder="Password" required>
+                    </div>
+                    <button type="submit" class="btn btn-success w-100 py-2 fw-bold rounded-3 shadow-sm mb-3">
+                        உள்நுழைக (Login)
+                    </button>
+                </form>
+                <div class="text-center border-top pt-3 mt-1">
+                    <span class="small text-secondary">புதிய பணியாளரா? </span>
+                    <button type="button" onclick="document.getElementById('authFlipper').classList.toggle('flipped');" class="btn btn-link text-success fw-bold p-0 text-decoration-none small">
+                        பதிவு செய்க (Sign Up) <i class="fa-solid fa-arrow-right ms-1"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Back: SIGNUP -->
+            <div class="auth-card-face auth-card-back">
+                <div class="text-center mb-3">
+                    <img src="{% static 'images/tnpds_logo.jpg' %}" alt="TNPDS Logo" style="height: 65px; width: 65px; object-fit: cover; border-radius: 50%;" class="mb-2 mx-auto d-block">
+                    <h5 class="fw-bold text-dark mb-1">புதிய பணியாளர் பதிவு</h5>
+                </div>
+                <form method="post" action="{% url 'shop_worker_signup' %}">
+                    {% csrf_token %}
+                    <div class="custom-form-fields mb-2">
+                        <label>கடை எண் (Shop ID)</label>
+                        <input type="text" name="shop_id" placeholder="எ.கா: 12345" required>
+                    </div>
+                    <div class="custom-form-fields mb-2">
+                        <label>பணியாளர் ஐடி (Worker ID)</label>
+                        <input type="text" name="shop_worker_id" placeholder="Worker ID" required>
+                    </div>
+                    <div class="custom-form-fields mb-2">
+                        <label>மொபைல் எண்</label>
+                        <input type="text" name="mobile_number" placeholder="10 இலக்க எண்" required>
+                    </div>
+                    <div class="custom-form-fields mb-2">
+                        <label>கடவுச்சொல்</label>
+                        <input type="password" name="password" placeholder="Password" required>
+                    </div>
+                    <div class="custom-form-fields mb-3">
+                        <label>கடவுச்சொல்லை உறுதி செய்க</label>
+                        <input type="password" name="confirm_password" placeholder="Confirm Password" required>
+                    </div>
+                    <button type="submit" class="btn btn-success w-100 py-2 fw-bold rounded-3 shadow-sm mb-2">
+                        பதிவு செய் (Sign Up)
+                    </button>
+                </form>
+                <div class="text-center border-top pt-2">
+                    <button type="button" onclick="document.getElementById('authFlipper').classList.toggle('flipped');" class="btn btn-link text-success fw-bold p-0 text-decoration-none small">
+                        <i class="fa-solid fa-arrow-left me-1"></i> உள்நுழைய திரும்பவும்
+                    </button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

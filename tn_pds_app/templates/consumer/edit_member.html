@@ -1,0 +1,210 @@
+{% extends 'common/base_home_page.html' %}
+{% block content %}
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow-sm border-0">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">Edit Family Member Details - {{ member.name }}</h5>
+                </div>
+
+                <!--  Django Messages Display -->
+                {% if messages %}
+                    <div class="p-3">
+                        {% for message in messages %}
+                            <div class="alert alert-{{ message.tags }} alert-dismissible fade show mb-0" role="alert">
+                                {{ message }}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+                    
+                <div class="card-body">
+                   <form method="POST" enctype="multipart/form-data" id="editForm">
+                        {% csrf_token %}
+                        
+                        <!-- Aadhaar Number (Read-only field) -->
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Aadhaar Number (Read-only)</label>
+                            <input type="text" name="aadhaar_number" value="{{ member.aadhaar_number }}" class="form-control form-control-sm py-2 bg-light" readonly>
+                            <small class="text-muted">Aadhaar number cannot be modified online.</small>
+                        </div>
+
+                        <!-- Full Name Field -->
+                        <div class="mb-3">
+                            <label class="form-label fw-bold d-flex justify-content-between">
+                                Full Name
+                                {% if pending_req and 'name' in pending_req.changed_fields %}
+                                    <span class="text-warning small fw-bold">
+                                        <i class="fa-solid fa-clock"></i> Waiting for Approval
+                                    </span>
+                                {% else %}
+                                    <button type="button" class="btn btn-sm btn-outline-secondary py-0 px-1" onclick="enableField('id_name')">
+                                        <i class="fa-solid fa-pen"></i> Edit
+                                    </button>
+                                {% endif %}
+                            </label>
+                            {{ form.name }}
+                        </div>
+
+                        <!-- Date of Birth Field -->
+                        <div class="mb-3">
+                            <label class="form-label fw-bold d-flex justify-content-between">
+                                Date of Birth
+                                {% if pending_req and 'dob' in pending_req.changed_fields %}
+                                    <span class="text-warning small fw-bold">
+                                        <i class="fa-solid fa-clock"></i> Waiting for Approval
+                                    </span>
+                                {% else %}
+                                    <button type="button" class="btn btn-sm btn-outline-secondary py-0 px-1" onclick="enableField('id_dob')">
+                                        <i class="fa-solid fa-pen"></i> Edit
+                                    </button>
+                                {% endif %}
+                            </label>
+                            {{ form.dob }}
+                        </div>
+
+                        <!-- Gender Field -->
+                        <div class="mb-3">
+                            <label class="form-label fw-bold d-flex justify-content-between">
+                                Gender
+                                {% if pending_req and 'gender' in pending_req.changed_fields %}
+                                    <span class="text-warning small fw-bold">
+                                        <i class="fa-solid fa-clock"></i> Waiting for Approval
+                                    </span>
+                                {% else %}
+                                    <button type="button" class="btn btn-sm btn-outline-secondary py-0 px-1" onclick="enableField('id_gender')">
+                                        <i class="fa-solid fa-pen"></i> Edit
+                                    </button>
+                                {% endif %}
+                            </label>
+                            {{ form.gender }}
+                        </div>
+
+                        <!-- Relation Field -->
+                        <div class="mb-3">
+                            <label class="form-label fw-bold d-flex justify-content-between">
+                                Relation with Head
+                                {% if pending_req and 'relation' in pending_req.changed_fields %}
+                                    <span class="text-warning small fw-bold">
+                                        <i class="fa-solid fa-clock"></i> Waiting for Approval
+                                    </span>
+                                {% else %}
+                                    <button type="button" class="btn btn-sm btn-outline-secondary py-0 px-1" onclick="enableField('id_relation')">
+                                        <i class="fa-solid fa-pen"></i> Edit
+                                    </button>
+                                {% endif %}
+                            </label>
+                            {{ form.relation }}
+                        </div>
+
+                        <!-- Mobile Number Field -->
+                        <div class="mb-3">
+                            <label class="form-label fw-bold d-flex justify-content-between">
+                                Mobile Number
+                                {% if pending_req and 'mobile_number' in pending_req.changed_fields %}
+                                    <span class="text-warning small fw-bold">
+                                        <i class="fa-solid fa-clock"></i> Waiting for Approval
+                                    </span>
+                                {% else %}
+                                    <button type="button" class="btn btn-sm btn-outline-secondary py-0 px-1" onclick="enableField('id_mobile_number')">
+                                        <i class="fa-solid fa-pen"></i> Edit
+                                    </button>
+                                {% endif %}
+                            </label>
+                            {{ form.mobile_number }}
+                        </div>
+
+                        <!-- Email ID Field -->
+                        <div class="mb-3">
+                            <label class="form-label fw-bold d-flex justify-content-between">
+                                Email ID (Optional)
+                                {% if pending_req and 'email_id' in pending_req.changed_fields %}
+                                    <span class="text-warning small fw-bold">
+                                        <i class="fa-solid fa-clock"></i> Waiting for Approval
+                                    </span>
+                                {% else %}
+                                    <button type="button" class="btn btn-sm btn-outline-secondary py-0 px-1" onclick="enableField('id_email_id')">
+                                        <i class="fa-solid fa-pen"></i> Edit
+                                    </button>
+                                {% endif %}
+                            </label>
+                            {{ form.email_id }}
+                        </div>
+
+                        <!-- Reason & Document -->
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Reason for Modification</label>
+                            {{ form.reason }}
+                        </div>
+
+                      <div class="mb-3">
+                        <label class="form-label fw-bold">
+                            Supporting Proof Document 
+                            <!--  Name, DOB, Gender ku compulsory star mark -->
+                            <span class="text-danger" id="docRequirementNotice">* (Mandatory only if changing Name, DOB, or Gender)</span>
+                        </label>
+                        {{ form.document_copy }}
+                        <small class="text-muted">Please upload valid proof (Aadhaar/Birth Certificate/Gazette etc.) if you modify Name, DOB, or Gender.</small>
+                    </div>
+
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-success btn-sm py-2">Submit Request for Approval</button>
+                            <a href="{% url 'consumer_profile' %}" class="btn btn-outline-secondary btn-sm">Cancel</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const fields = ['id_name', 'id_dob', 'id_gender', 'id_relation', 'id_mobile_number', 'id_aadhaar_number', 'id_email_id'];
+        fields.forEach(function(id) {
+            let el = document.getElementById(id);
+            if (el) {
+                el.setAttribute('readonly', true);
+                if(el.tagName === 'SELECT') {
+                    el.style.pointerEvents = 'none';
+                    el.style.backgroundColor = '#e9ecef';
+                }
+            }
+        });
+    });
+
+    function enableField(fieldId) {
+        let el = document.getElementById(fieldId);
+        if (el) {
+            el.removeAttribute('readonly');
+            if(el.tagName === 'SELECT') {
+                el.style.pointerEvents = 'auto';
+                el.style.backgroundColor = '#fff';
+            }
+            el.focus();
+            el.style.borderColor = '#198754';
+        }
+    }
+</script>
+
+<script>
+    // User Name, DOB, Gender change - document compulsory :
+    document.addEventListener("DOMContentLoaded", function() {
+        const nameField = document.getElementById('id_name');
+        const dobField = document.getElementById('id_dob');
+        const genderField = document.getElementById('id_gender');
+        const docField = document.getElementById('id_document_copy');
+
+        // Original values-ai track  (optional) on User form submit:
+        const editForm = document.getElementById('editForm');
+        if(editForm) {
+            editForm.addEventListener('submit', function(e) {
+                // Front-end laey oru quick alert tharalam
+                // Backend-layum namma views.py la check panrom, so double safe!
+            });
+        }
+    });
+</script>
+{% endblock %}

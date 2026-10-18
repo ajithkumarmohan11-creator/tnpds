@@ -1,0 +1,210 @@
+{% extends 'common/base_home_page.html' %}
+
+{% block title %} {{ title }} {% endblock %}
+
+{% block content %}
+<!-- Bootstrap 5 CSS & FontAwesome -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+{% load static %}
+
+<link rel="stylesheet" type="text/css" href="{% static 'css/common_style.css' %}">
+
+    
+<link rel="stylesheet" type="text/css" href="{% static 'js/common_function.js' %}">
+
+
+
+<style>
+    /* Compact Admin Card Styles */
+    .compact-admin-card {
+        background: #ffffff;
+        border: 1px solid #e2e8f0;
+        border-radius: 12px;
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+    }
+    .compact-admin-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 18px rgba(0, 0, 0, 0.08);
+    }
+    .compact-img-container {
+        height: 120px;
+        background-color: #f8fafc;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 10px;
+        border-top-left-radius: 12px;
+        border-top-right-radius: 12px;
+        border-bottom: 1px solid #f1f5f9;
+    }
+    .compact-img-container img {
+        max-height: 100%;
+        max-width: 100%;
+        object-fit: contain;
+    }
+</style>
+
+<div class="container-fluid px-4 py-4">
+
+    <!-- Messages -->
+    {% if messages %}
+        <div id="alert-messages-box" class="row justify-content-center mb-3">
+            <div class="col-md-8 col-lg-6">
+                {% for i in messages %}
+                    <div class="alert alert-{{ i.tags|default:'info' }} text-center py-2 mb-2 rounded-3 shadow-sm small">
+                        {{ i }}
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    {% endif %}
+
+    <!-- 1. Add Commodity Form Top Card -->
+    <div class="card shadow-sm border-0 rounded-4 overflow-hidden mb-4">
+        <div class="card-header bg-primary text-white py-2 px-3 d-flex align-items-center">
+            <i class="fa-solid fa-circle-plus me-2"></i>
+            <h6 class="fw-bold mb-0">Add New Commodity / Item</h6>
+        </div>
+        <div class="card-body p-3 bg-white">
+            <form method="post" action="{{ url }}" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="row g-2 align-items-end">
+                    <div class="col-md-3">
+                        <label class="form-label small fw-semibold text-secondary mb-1">Commodity Name</label>
+                        <input type="text" name="commodity" class="form-control form-control-sm" placeholder="e.g. Boiled Rice" required>
+                    </div>
+                    <div class="col-md-2">
+                        <label class="form-label small fw-semibold text-secondary mb-1">Price (₹)</label>
+                        <input type="number" step="0.01" name="price" class="form-control form-control-sm" placeholder="0.00" required>
+                    </div>
+                    <div class="col-md-2">
+                        <label class="form-label small fw-semibold text-secondary mb-1">Unit</label>
+                        <input type="text" name="unit" class="form-control form-control-sm" placeholder="kg / litre / packet" required>
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label small fw-semibold text-secondary mb-1">Product Image</label>
+                        <input type="file" name="commodity_image" class="form-control form-control-sm" accept="image/*">
+                    </div>
+                    <div class="col-md-2 d-grid">
+                        <button type="submit" class="btn btn-primary btn-sm fw-bold">
+                            <i class="fa-solid fa-plus me-1"></i> Add Item
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- 2. PDS Commodities Compact Grid -->
+    <div class="mb-4">
+        <div class="d-flex align-items-center mb-3">
+            <span class="badge bg-primary px-3 py-1 me-2 fw-semibold">Govt Quota</span>
+            <h5 class="fw-bold text-dark mb-0">PDS Commodities</h5>
+            <span class="badge bg-secondary-subtle text-secondary ms-2 rounded-pill small">{{ pds_commodities|length }} Items</span>
+        </div>
+
+        <div class="row row-cols-2 row-cols-sm-3 row-cols-md-4 row-cols-lg-6 g-3">
+            {% for item in pds_commodities %}
+            <div class="col">
+                <div class="compact-admin-card shadow-sm">
+                    <div class="compact-img-container">
+                        {% if item.commodity_image %}
+                            <img src="{{ item.commodity_image.url }}" alt="{{ item.commodity }}">
+                        {% else %}
+                            <i class="fa-solid fa-bowl-rice fa-2x text-muted"></i>
+                        {% endif %}
+                    </div>
+
+                    <div class="p-2 text-center d-flex flex-column flex-grow-1">
+                        <span class="badge bg-primary-subtle text-primary border border-primary-subtle mb-1 mx-auto" style="font-size: 10px;">
+                            Govt PDS
+                        </span>
+                        <h6 class="fw-bold text-dark text-capitalize text-truncate mb-1" title="{{ item.commodity }}" style="font-size: 14px;">
+                            {{ item.commodity }}
+                        </h6>
+                        <span class="text-muted small mb-1" style="font-size: 11px;">Unit: {{ item.unit }}</span>
+                        <div class="fw-bold text-success mb-2" style="font-size: 13px;">
+                            Price: ₹{{ item.price }} / {{ item.unit }}
+                        </div>
+
+                        <!-- Action Buttons -->
+                        <div class="d-flex gap-1 mt-auto">
+                            <a href="{% url 'admin_edit_commodity' item.id %}" class="btn btn-warning btn-sm w-50 py-1 fw-bold" style="font-size: 11px;">
+                                <i class="fa-solid fa-pen"></i> Edit
+                            </a>
+                            <a href="{% url 'admin_delete_commodity' item.id %}" 
+                               class="btn btn-danger btn-sm w-50 py-1 fw-bold" 
+                               style="font-size: 11px;" 
+                               onclick="return confirm('Delete this commodity?');">
+                                <i class="fa-solid fa-trash"></i> Delete
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+                <div class="col-12 text-muted small">No PDS commodities found.</div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- 3. Non-PDS Commodities Compact Grid -->
+    {% if non_pds_commodities %}
+    <div class="mb-4">
+        <div class="d-flex align-items-center mb-3">
+            <span class="badge bg-success px-3 py-1 me-2 fw-semibold">Open Market</span>
+            <h5 class="fw-bold text-dark mb-0">Non-PDS Commodities</h5>
+            <span class="badge bg-secondary-subtle text-secondary ms-2 rounded-pill small">{{ non_pds_commodities|length }} Items</span>
+        </div>
+
+        <div class="row row-cols-2 row-cols-sm-3 row-cols-md-4 row-cols-lg-6 g-3">
+            {% for item in non_pds_commodities %}
+            <div class="col">
+                <div class="compact-admin-card shadow-sm">
+                    <div class="compact-img-container">
+                        {% if item.commodity_image %}
+                            <img src="{{ item.commodity_image.url }}" alt="{{ item.commodity }}">
+                        {% else %}
+                            <i class="fa-solid fa-box-open fa-2x text-muted"></i>
+                        {% endif %}
+                    </div>
+
+                    <div class="p-2 text-center d-flex flex-column flex-grow-1">
+                        <span class="badge bg-success-subtle text-success border border-success-subtle mb-1 mx-auto" style="font-size: 10px;">
+                            Non-PDS
+                        </span>
+                        <h6 class="fw-bold text-dark text-capitalize text-truncate mb-1" title="{{ item.commodity }}" style="font-size: 14px;">
+                            {{ item.commodity }}
+                        </h6>
+                        <span class="text-muted small mb-1" style="font-size: 11px;">Unit: {{ item.unit }}</span>
+                        <div class="fw-bold text-success mb-2" style="font-size: 13px;">
+                            Price: ₹{{ item.price }} / {{ item.unit }}
+                        </div>
+
+                        <!-- Action Buttons -->
+                        <div class="d-flex gap-1 mt-auto">
+                            <a href="{% url 'admin_edit_commodity' item.id %}" class="btn btn-warning btn-sm w-50 py-1 fw-bold" style="font-size: 11px;">
+                                <i class="fa-solid fa-pen"></i> Edit
+                            </a>
+                            <a href="{% url 'admin_delete_commodity' item.id %}" 
+                               class="btn btn-danger btn-sm w-50 py-1 fw-bold" 
+                               style="font-size: 11px;" 
+                               onclick="return confirm('Delete this commodity?');">
+                                <i class="fa-solid fa-trash"></i> Delete
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+
+</div>
+{% endblock %}

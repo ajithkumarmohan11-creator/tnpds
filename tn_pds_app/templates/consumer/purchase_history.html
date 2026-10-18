@@ -1,0 +1,149 @@
+{% extends 'common/base_home_page.html' %}
+
+{% block content %}
+<div class="container mt-4 mb-5">
+    <div class="row">
+        <div class="col-12">
+            <h2 class="mb-4 text-primary fw-bold">
+                <i class="fa-solid fa-clock-rotate-left me-2"></i> Purchase History & Monthly Quota Status
+            </h2>
+            
+            <!-- Month & Year Filter Form -->
+            <form method="GET" class="card shadow-sm p-3 mb-4 bg-light rounded border-0">
+                <div class="row g-3 align-items-center">
+                    <div class="col-md-4">
+                        <label for="month" class="form-label fw-semibold">Select Month:</label>
+                        <select name="month" id="month" class="form-select">
+                            {% for m_num, m_name in month_choices %}
+                                <option value="{{ m_num }}" {% if selected_month == m_num %}selected{% endif %}>
+                                    {{ m_name }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-4">
+                        <label for="year" class="form-label fw-semibold">Select Year:</label>
+                        <input type="number" name="year" id="year" class="form-control" value="{{ selected_year }}" min="2024" max="2030">
+                    </div>
+                    <div class="col-md-4 d-flex align-items-end">
+                        <button type="submit" class="btn btn-primary w-100 fw-bold">
+                            <i class="fa-solid fa-filter me-1"></i> Filter History
+                        </button>
+                    </div>
+                    <div class="col-12 text-end mt-2">
+                        <a href="{% url 'consumer_purchase_history' %}" class="btn btn-outline-danger btn-sm">
+                            <i class="fa-solid fa-rotate-left me-1"></i> Reset Filters
+                        </a>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- 1. Monthly PDS Quota Status & Partial Purchase Details -->
+    <div class="row mb-5">
+        <div class="col-12">
+            <h4 class="text-dark fw-bold mb-3">
+                <i class="fa-solid fa-box-archive text-warning me-2"></i> Current Month PDS Quota Status
+            </h4>
+            {% if quotas %}
+                <div class="table-responsive shadow-sm rounded">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead class="table-dark">
+                            <tr>
+                                <th>Commodity</th>
+                                <th>Allocated Qty</th>
+                                <th>Purchased Qty</th>
+                                <th>Remaining Qty</th>
+                                <th>Status</th>
+                                <th>Last Purchased At</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for quota in quotas %}
+                            <tr>
+                                <td class="fw-bold">{{ quota.commodity.commodity }}</td>
+                                <td>{{ quota.allocated_qty }} {{ quota.commodity.unit }}</td>
+                                <td class="text-success fw-semibold">{{ quota.purchased_qty }} {{ quota.commodity.unit }}</td>
+                                <td class="text-danger fw-semibold">{{ quota.remaining_qty }} {{ quota.commodity.unit }}</td>
+                                <td>
+                                    {% if quota.is_fully_purchased %}
+                                        <span class="badge bg-success">Completed</span>
+                                    {% elif quota.is_partially_purchased %}
+                                        <span class="badge bg-warning text-dark">Partial Purchase</span>
+                                    {% else %}
+                                        <span class="badge bg-secondary">Pending</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if quota.last_purchased_at %}
+                                        {{ quota.last_purchased_at|date:"d M Y, h:i A" }}
+                                    {% else %}
+                                        <span class="text-muted">-</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <div class="alert alert-info text-center py-3">No quota allocation records found for this month.</div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- 2. Order Transaction History -->
+    <div class="row">
+        <div class="col-12">
+            <h4 class="text-dark fw-bold mb-3">
+                <i class="fa-solid fa-receipt text-success me-2"></i> Order Transaction History
+            </h4>
+            {% if orders %}
+                {% for order in orders %}
+                <div class="card shadow-sm mb-3 border-0">
+                    <div class="card-header bg-light d-flex justify-content-between align-items-center py-3">
+                        <div>
+                            <span class="fw-bold text-primary">Token: {{ order.token_number }}</span>
+                            <span class="text-muted ms-3"><i class="fa-regular fa-calendar me-1"></i>{{ order.order_date|date:"d M Y, h:i A" }}</span>
+                        </div>
+                        <div>
+                            <span class="badge bg-info text-dark me-2">Shop: {{ order.shop.name }}</span>
+                            
+                            <!--  Order Status Badge  -->
+                            {% if order.status == 'PENDING' %}
+                                <span class="badge bg-warning text-dark me-2">PENDING</span>
+                            {% elif order.status == 'DELIVERED' %}
+                                <span class="badge bg-success me-2">DELIVERED</span>
+                            {% else %}
+                                <span class="badge bg-secondary me-2">{{ order.status }}</span>
+                            {% endif %}
+
+                            <span class="badge bg-success">₹ {{ order.total_amount }}</span>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <ul class="list-group list-group-flush">
+                            {% for item in order.items.all %}
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                <div>
+                                    <strong>{{ item.commodity.commodity }}</strong> 
+                                    <span class="text-muted ms-2">(Price: ₹{{ item.price }})</span>
+                                </div>
+                                <div class="text-end">
+                                    <span class="badge bg-secondary me-2">Qty: {{ item.quantity }} {{ item.commodity.unit }}</span>
+                                    <span class="fw-bold text-dark">Total: ₹{{ item.total_price }}</span>
+                                </div>
+                            </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+                {% endfor %}
+            {% else %}
+                <div class="alert alert-warning text-center py-3">No order transactions found for the selected month and year.</div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

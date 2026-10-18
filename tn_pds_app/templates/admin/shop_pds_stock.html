@@ -1,0 +1,87 @@
+{% extends 'common/base_home_page.html' %}
+
+{% block content %}
+<div class="container mt-4 mb-5">
+    <div class="row mb-4">
+        <div class="col-12">
+            <h2 class="text-primary fw-bold">
+                <i class="fa-solid fa-truck-fast me-2"></i> Admin PDS Stock Dispatch & Management
+            </h2>
+            <p class="text-muted">Select a Fair Price Shop to update physical stock quantities for PDS regulated commodities.</p>
+        </div>
+    </div>
+
+    <!-- Select Shop Dropdown Form -->
+    <div class="card shadow-sm border-0 mb-4 bg-light">
+        <div class="card-body">
+            <form method="GET" action="" class="row g-3 align-items-end">
+                <div class="col-md-8">
+                    <label class="form-label fw-bold">Select Fair Price Shop</label>
+                    <select name="shop_id" class="form-select" required>
+                        <option value="">-- Choose Fair Price Shop --</option>
+                        {% for shop in shops %}
+                        <option value="{{ shop.shop_id }}" {% if selected_shop_id == shop.shop_id|stringformat:"s" %}selected{% endif %}>
+                            {{ shop.name }} (Shop ID: {{ shop.shop_id }} - {{ shop.address }})
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <button type="submit" class="btn btn-primary w-100">
+                        <i class="fa-solid fa-magnifying-glass me-2"></i> Load Shop Inventory
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    {% if current_shop %}
+    <!-- PDS Stock Update Form -->
+    <div class="card shadow-sm border-0">
+        <div class="card-header bg-dark text-white">
+            <h5 class="mb-0"><i class="fa-solid fa-boxes-stacked me-2"></i> Updating PDS Stock for: {{ current_shop.name }} (ID: {{ current_shop.shop_id }})</h5>
+        </div>
+        <div class="card-body">
+            <form method="POST">
+                {% csrf_token %}
+                <input type="hidden" name="shop_id" value="{{ current_shop.shop_id }}">
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle">
+                        <thead class="table-secondary">
+                            <tr>
+                                <th>Commodity Name</th>
+                                <th>Unit</th>
+                                <th>Physical Stock Quantity to Dispatch</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for item in pds_stocks %}
+                            <tr>
+                                <td class="fw-bold">{{ item.name }}</td>
+                                <td>{{ item.unit }}</td>
+                                <td style="width: 300px;">
+                                    <div class="input-group">
+                                        <input type="number" step="0.001" name="stock_{{ item.id }}" value="{{ item.stock_quantity }}" class="form-control fw-bold text-success" required>
+                                        <span class="input-group-text">{{ item.unit }}</span>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="3" class="text-center text-muted py-3">No PDS commodities configured in the system.</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                <div class="text-end mt-3">
+                    <button type="submit" class="btn btn-success px-4 py-2 fw-bold">
+                        <i class="fa-solid fa-floppy-disk me-2"></i> Save PDS Stock Quantities
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

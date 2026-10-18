@@ -1,0 +1,157 @@
+{% extends 'common/base_home_page.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container my-4">
+    <h2 class="text-center text-primary mb-4 fw-bold">Consumer Dashboard & Profile</h2>
+    
+    <div class="row g-4">
+        <!-- 1. Profile Details Card -->
+        <div class="col-md-5">
+            <div class="card shadow-sm border-0 rounded-3 h-100">
+                <div class="card-header bg-primary text-white text-center py-3">
+                    <h4 class="mb-0 fw-bold"><i class="fa-solid fa-user-gear me-2"></i>Profile Details</h4>
+                </div>
+                <div class="card-body p-4">
+                    <table class="table table-bordered table-striped align-middle mb-0">
+                        <tbody>
+                            {% for label, value in profile_data %}
+                            <tr>
+                                <th class="w-50 text-secondary">{{ label }}</th>
+                                <td class="fw-semibold text-dark">{{ value }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                    
+                    <div class="text-center mt-4">
+                        <a href="{% url 'consumer_home_page' %}" class="btn btn-secondary px-4 fw-bold">
+                            ← Back to Home page
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 2. Family Members Section -->
+        <div class="col-md-7">
+            <div class="card shadow-sm border-0 rounded-3 h-100">
+                <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center py-3">
+                    <h4 class="mb-0 fw-bold fs-5"><i class="fa-solid fa-users me-2"></i>Family Members</h4>
+                    <button class="btn btn-warning btn-sm fw-bold px-3 text-dark" data-bs-toggle="modal" data-bs-target="#addMemberModal">
+                        <i class="fa-solid fa-plus me-1"></i> Add Member
+                    </button>
+                </div>
+                <div class="card-body p-3">
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-hover align-middle">
+                            <thead class="table-light">
+                                <tr style="font-size: 13px;">
+                                    <!-- Dynamic Table Headers Loop -->
+                                    {% for header in table_headers %}
+                                        <th>{{ header }}</th>
+                                    {% endfor %}
+                                </tr>
+                            </thead>
+                                <tbody>
+                                    {% for item in family_members_data %}
+                                    <tr style="font-size: 13px;">
+                                        <td class="fw-semibold">{{ item.member.name | title }}</td>
+                                        <td>{{ item.member.relation }}</td>
+                                        <td>{{ item.member.gender }}</td>
+                                        <td>
+                                            {% if item.member.is_adult %}
+                                                <span class="badge bg-success">Adult</span>
+                                            {% else %}
+                                                <span class="badge bg-warning text-dark">Child</span>
+                                            {% endif %}
+                                        </td>
+                                        <td>XXXX-XXXX-{{ item.member.aadhaar_number|slice:"-4:" }}</td>
+                                        <td>
+                                            {% if item.is_delete_pending %}
+                                                <!--  Deletion pending- disable the button show only Status -->
+                                                <span class="badge bg-danger py-2 px-2">
+                                                    <i class="fa-solid fa-clock"></i> Waiting for Deletion Approval
+                                                </span>
+
+                                            {% elif item.is_add_pending %}
+                                            <!--  Add pending-disable the button show only Status -->
+                                                <span class="badge bg-danger text-dark py-1 px-2 mb-1 d-block text-center">
+                                                    <i class="fa-solid fa-clock"></i> Waiting for Add Approval
+                                                </span>
+
+                                            {% elif item.is_edit_pending %}
+                                                <!--  Edit pending-disable the button show only Status -->
+                                                <span class="badge bg-warning text-dark py-1 px-2 mb-1 d-block text-center">
+                                                    <i class="fa-solid fa-clock"></i> Waiting for Edit Approval
+                                                </span>
+
+                                                <div class="d-flex gap-1 justify-content-center">
+                                                    <a href="{% url 'consumer_edit_family_member' item.member.id %}" class="btn btn-primary btn-sm py-0 px-2" title="Edit Request">
+                                                        <i class="fa-solid fa-pen-to-square"></i> Edit
+                                                    </a>
+                                                    <a href="{% url 'consumer_delete_family_member' item.member.id %}" class="btn btn-sm btn-outline-danger py-0 px-2";" title="Delete Request">
+                                                        <i class="fa-solid fa-trash"></i> Delete
+                                                    </a>
+                                                </div>
+                                            {% else %}
+                                                <!--  Normal State: Both Edit & Delete buttons -->
+                                                <div class="d-flex gap-1 justify-content-center">
+                                                    <a href="{% url 'consumer_edit_family_member' item.member.id %}" class="btn btn-primary btn-sm py-0 px-2" title="Edit Request">
+                                                        <i class="fa-solid fa-pen-to-square"></i> Edit
+                                                    </a>
+                                                    <a href="{% url 'consumer_delete_family_member' item.member.id %}" class="btn btn-sm btn-outline-danger py-0 px-2";" title="Delete Request">
+                                                        <i class="fa-solid fa-trash"></i> Delete
+                                                    </a>
+                                                </div>
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                    {% empty %}
+                                    <tr>
+                                        <td colspan="6" class="text-center text-muted py-4">
+                                            No family members added yet.
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Add Member Modal -->
+<div class="modal fade" id="addMemberModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form method="POST">
+                {% csrf_token %}
+                <div class="modal-header bg-primary text-white">
+                    <h5 class="modal-title fw-bold fs-6">Add Family Member</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body p-4">
+                    {% for field in form %}
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold small text-dark">{{ field.label }}</label>
+                            {{ field }}
+                            {% if field.errors %}
+                                <div class="text-danger small mt-1">{{ field.errors.0 }}</div>
+                            {% endif %}
+                        </div>
+                    {% endfor %}
+                </div>
+                <div class="modal-footer bg-light">
+                    <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary btn-sm fw-bold px-4">Save Member</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% include 'consumer/allocation_details.html' %}
+
+{% endblock %}

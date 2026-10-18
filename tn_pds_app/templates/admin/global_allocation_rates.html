@@ -1,0 +1,63 @@
+{% extends 'common/base_home_page.html' %}
+{% block title %} Global PDS Rules & Rates {% endblock %}
+{% block content %}
+<div class="container-fluid py-4 px-4">
+    <div class="row justify-content-center">
+        <div class="col-xl-12">
+            <div class="card shadow-sm border-0 rounded-4">
+                <div class="card-header bg-primary text-white py-3 text-center">
+                    <h5 class="fw-bold mb-0 text-uppercase">Global Commodity Defaults & Per-Head Rates</h5>
+                </div>
+                <div class="card-body p-4 bg-white">
+                    <form method="post">
+                        {% csrf_token %}
+                        <div class="table-responsive mb-4">
+                            <table class="table table-hover align-middle">
+                                <thead class="table-light text-center small text-uppercase">
+                                    <tr>
+                                        <th class="text-start ps-3">Commodity Name</th>
+                                        <th style="width: 110px;">Min Qty</th>
+                                        <th style="width: 140px;">Group Name</th>
+                                        <th style="width: 120px;">Group Max Cap</th>
+                                        <th style="width: 120px;" class="text-success">Adult Rate</th>
+                                        <th style="width: 120px;" class="text-dark">Child Rate</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for commodity in commodities %}
+                                    <tr>
+                                        <td class="fw-bold text-dark ps-3">
+                                            {{ commodity.commodity|title }} <small class="text-muted">({{ commodity.unit }})</small>
+                                        </td>
+                                        <td>
+                                            <input type="number" step="0.01" min="0" class="form-control form-control-sm text-center" name="min_qty_{{ commodity.id }}" value="{{ commodity.min_qty }}">
+                                        </td>
+                                        <td>
+                                            <input type="text" class="form-control form-control-sm text-center" name="group_name_{{ commodity.id }}" value="{{ commodity.group_name|default:'' }}" placeholder="e.g. Grains">
+                                        </td>
+                                        <td>
+                                            <input type="number" step="0.01" min="0" class="form-control form-control-sm text-center text-primary fw-semibold" name="group_max_cap_{{ commodity.id }}" value="{{ commodity.group_max_cap }}">
+                                        </td>
+                                        <td>
+                                            <input type="number" step="0.01" min="0" class="form-control form-control-sm text-center text-success fw-bold" name="adult_rate_{{ commodity.id }}" value="{{ commodity.adult_rate }}">
+                                        </td>
+                                        <td>
+                                            <input type="number" step="0.01" min="0" class="form-control form-control-sm text-center text-dark fw-bold" name="child_rate_{{ commodity.id }}" value="{{ commodity.child_rate }}">
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="d-grid mt-4">
+                            <button type="submit" class="btn btn-success btn-lg fw-bold rounded-pill shadow-sm">
+                                <i class="fa-solid fa-floppy-disk me-2"></i> Save Global Rules & Rates
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

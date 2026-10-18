@@ -1,0 +1,122 @@
+{% extends 'common/base_home_page.html' %}
+{% block content %}
+<div class="container-fluid mt-4">
+    <div class="row mb-3">
+        <div class="col-md-12">
+            <h2>Pending Family Member Requests</h2>
+            <p class="text-muted">Review requests in chronological order (Date & Time wise) to ensure fairness and transparency.</p>
+        </div>
+    </div>
+
+    <!--  Edit & Delete filter -->
+    <div class="mb-4">
+        <div class="btn-group" role="group">
+            <a href="?type=ALL" class="btn btn-sm {% if current_filter == 'ALL' or not current_filter %}btn-dark{% else %}btn-outline-dark{% endif %}">
+                <i class="fa-solid fa-list"></i> All Requests
+            </a>
+            <a href="?type=EDIT" class="btn btn-sm {% if current_filter == 'EDIT' %}btn-primary{% else %}btn-outline-primary{% endif %}">
+                <i class="fa-solid fa-pen-to-square"></i> Edit Requests Only
+            </a>
+            <a href="?type=DELETE" class="btn btn-sm {% if current_filter == 'DELETE' %}btn-danger{% else %}btn-outline-danger{% endif %}">
+                <i class="fa-solid fa-trash"></i> Delete Requests Only
+            </a>
+            <a href="?type=ADD" class="btn btn-sm {% if current_filter == 'ADD' %}btn-success{% else %}btn-outline-success{% endif %}">
+                <i class="fa-solid fa-plus"></i> Add Requests Only
+            </a>
+        </div>
+    </div>
+
+    <div class="card shadow-sm border-0">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>Requested At</th>
+                            <th>Card Number</th>
+                            <th>Type</th>
+                            <th>Member Name</th>
+                            <th>Relation</th>
+                            <th>Actions / History</th>
+                            <th>Decision</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for req in pending_requests %}
+                        <tr>
+                            <td>{{ req.requested_at|date:"d M Y, h:i A" }}</td>
+                            <td><strong>{{ req.consumer.card_number }}</strong></td>
+                            <td>
+                                <span class="badge bg-info text-dark">{{ req.request_type }}</span>
+                            </td>
+                            <td>{{ req.name }}</td>
+                            <td>{{ req.relation }}</td>
+                            <td>
+                                <!-- View History Button (Trigger Modal) -->
+                                <button type="button" class="btn btn-outline-primary btn-sm" data-bs-toggle="modal" data-bs-target="#historyModal{{ req.consumer.card_number }}">
+                                    <i class="bi bi-clock-history"></i> View History
+                                </button>
+                                
+                                {% if req.document_copy %}
+                                <a href="{{ req.document_copy.url }}" target="_blank" class="btn btn-outline-secondary btn-sm ms-1">
+                                    <i class="bi bi-file-earmark-text"></i> Proof
+                                </a>
+                                {% endif %}
+                            </td>
+                                <td>
+                                <!-- based on Request type : redirect separate page -->
+                                {% if req.request_type == 'EDIT' %}
+                                    <a href="{% url 'officer_review_edit_request' req.id %}" class="btn btn-warning btn-sm fw-bold">
+                                        <i class="fa-solid fa-list-check"></i> Review Edit Fields
+                                    </a>
+                                {% else %}
+                                    <a href="{% url 'officer_review_add_delete_request' req.id %}" class="btn btn-danger btn-sm fw-bold">
+                                        <i class="fa-solid fa-eye"></i> Review {{ req.request_type }} Request
+                                    </a>
+                                {% endif %}
+                                
+                                {% if req.document_copy %}
+                                <a href="{{ req.document_copy.url }}" target="_blank" class="btn btn-outline-secondary btn-sm ms-1">
+                                    <i class="bi bi-file-earmark-text"></i> Proof
+                                </a>
+                                {% endif %}
+                            </td>
+                        </tr>
+
+                        <!-- History Modal for each consumer-->
+                        <div class="modal fade" id="historyModal{{ req.consumer.card_number }}" tabindex="-1" aria-hidden="true">
+                            <div class="modal-dialog modal-lg">
+                                <div class="modal-content">
+                                    <div class="modal-header bg-dark text-white">
+                                        <h5 class="modal-title">Audit History - Card No: {{ req.consumer.card_number }}</h5>
+                                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <p><strong>Consumer Card:</strong> {{ req.consumer.card_number }}</p>
+                                        <hr>
+                                        <h6>Previous Requests & Status:</h6>
+                                        <ul class="list-group">
+                                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                                <span>{{ req.request_type }} for {{ req.name }} (Requested on: {{ req.requested_at }})</span>
+                                                <span class="badge bg-warning text-dark">{{ req.status }}</span>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Close</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {% empty %}
+                        <tr>
+                            <td colspan="7" class="text-center py-4 text-muted">No pending requests found! Everything is up to date.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,106 @@
+{% extends 'common/base_home_page.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container py-4">
+
+    <!-- Page Title Header -->
+    <div class="text-center mb-4">
+        <h3 class="fw-bold text-dark text-uppercase tracking-wide">
+            Admin - Edit Commodity
+        </h3>
+        <p class="text-muted small">Update commodity details, pricing and image</p>
+    </div>
+
+    <!-- Django Messages Display -->
+    {% if messages %}
+        <div class="row justify-content-center mb-3">
+            <div class="col-md-8 col-lg-6">
+                {% for i in messages %}
+                    <div class="alert alert-{{ i.tags|default:'info' }} text-center py-2 mb-2 rounded-3 shadow-sm small">
+                        {{ i }}
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    {% endif %}
+
+    <!-- Edit Commodity Form Box -->
+    <div class="row justify-content-center mb-5">
+        <div class="col-md-8 col-lg-6">
+            <div class="card shadow-sm border-0 rounded-4 overflow-hidden">
+                <div class="card-header bg-primary text-white py-3 text-center">
+                    <h5 class="fw-bold mb-0 text-capitalize">
+                        <i class="fa-solid fa-pen-to-square me-2"></i> Edit: {{ item.commodity }}
+                    </h5>
+                </div>
+                <div class="card-body p-4 bg-white">
+                    <form method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+
+                        <!-- Current Image & Live Preview Box (Enlarged Size) -->
+                        {% if item %}
+                        <div class="text-center mb-4 p-3 bg-light rounded-3 border">
+                            <label class="form-label small fw-bold text-secondary d-block mb-2">Image Preview</label>
+                            <div class="d-flex justify-content-center align-items-center gap-3">
+                                <div class="border rounded-3 p-2 bg-white shadow-sm" style="width: 160px; height: 160px; display: flex; align-items: center; justify-content: center;">
+                                    {% if item.commodity_image %}
+                                        <img id="image-preview" src="{{ item.commodity_image.url }}" alt="{{ item.commodity }}" style="max-height: 100%; max-width: 100%; object-fit: contain;">
+                                    {% else %}
+                                        <img id="image-preview" src="" alt="No Image" class="d-none" style="max-height: 100%; max-width: 100%; object-fit: contain;">
+                                        <i id="default-icon" class="fa-solid fa-image fa-3x text-muted"></i>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <small class="text-muted d-block mt-2" id="preview-text">
+                                {% if item.commodity_image %}Current product image{% else %}No image uploaded{% endif %}
+                            </small>
+                        </div>
+                        {% endif %}
+
+                        <!-- Form Fields -->
+                        <div class="mb-3 custom-form-fields">
+                            {{ form.as_p }}
+                        </div>
+
+                        <div class="d-flex justify-content-between gap-2 mt-4">
+                            <a href="{% url 'admin_add_commodity' %}" class="btn btn-secondary fw-bold py-2 rounded-pill shadow-sm w-50">
+                                <i class="fa-solid fa-arrow-left me-1"></i> Cancel
+                            </a>
+                            <button type="submit" class="btn btn-primary fw-bold py-2 rounded-pill shadow-sm w-50">
+                                <i class="fa-solid fa-floppy-disk me-1"></i> Save Changes
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const fileInput = document.querySelector('input[type="file"]');
+        const previewImg = document.getElementById('image-preview');
+        const defaultIcon = document.getElementById('default-icon');
+        const previewText = document.getElementById('preview-text');
+
+        if (fileInput && previewImg) {
+            fileInput.addEventListener('change', function () {
+                const file = this.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function (e) {
+                        previewImg.src = e.target.result;
+                        previewImg.classList.remove('d-none');
+                        if (defaultIcon) defaultIcon.classList.add('d-none');
+                        if (previewText) previewText.innerText = "New selected image (preview)";
+                    }
+                    reader.readAsDataURL(file);
+                }
+            });
+        }
+    });
+</script>
+{% endblock %}

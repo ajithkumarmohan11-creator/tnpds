@@ -1,0 +1,95 @@
+{% extends 'common/base_home_page.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="text-center mb-4">
+        <h3 class="fw-bold text-dark text-uppercase">Admin - Add Card Type</h3>
+        <p class="text-muted small">Manage ration card categories</p>
+    </div>
+
+    <!-- Messages -->
+    {% if messages %}
+        <div class="row justify-content-center mb-3">
+            <div class="col-md-8 col-lg-6">
+                {% for i in messages %}
+                    <div class="alert alert-{{ i.tags|default:'info' }} text-center py-2 mb-2 rounded-3 shadow-sm small">
+                        {{ i }}
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    {% endif %}
+
+    <!-- Form Box -->
+    <div class="row justify-content-center mb-5">
+        <div class="col-md-8 col-lg-6">
+            <div class="card shadow-sm border-0 rounded-4 overflow-hidden">
+                <div class="card-header bg-primary text-white py-3 text-center">
+                    <h5 class="fw-bold mb-0"><i class="fa-solid fa-id-card me-2"></i> Add Card Type</h5>
+                </div>
+                <div class="card-body p-4 bg-white">
+                    <form method="post" action="{% url 'admin_add_card_type' %}">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            {{ form.as_p }}
+                        </div>
+                        <div class="d-grid mt-4">
+                            <button type="submit" class="btn btn-primary fw-bold py-2 rounded-pill shadow-sm">
+                                <i class="fa-solid fa-plus-circle me-1"></i> Add Card
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Table Box -->
+    {% if card_type %}
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card shadow-sm border-0 rounded-4 overflow-hidden">
+                <div class="card-header bg-light py-3 d-flex justify-content-between align-items-center">
+                    <h6 class="fw-bold text-secondary text-uppercase mb-0">Existing Card Types</h6>
+                    <span class="badge bg-primary rounded-pill px-3 py-2">Total: {{ card_type|length }}</span>
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0 text-center">
+                        <thead class="table-light text-secondary small text-uppercase">
+                            <tr>
+                                <th style="width: 80px;">S.No</th>
+                                <th class="text-start">Card Type</th>
+                                <th style="width: 250px;">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for i in card_type %}
+                            <tr>
+                                <td class="text-muted fw-bold">{{ forloop.counter }}</td>
+                                <td class="text-start">
+                                    <span class="badge bg-info-subtle text-info-emphasis border border-info-subtle px-3 py-2 fs-6 fw-bold">
+                                        {{ i.card_type | upper }}
+                                    </span>
+                                </td>
+                                <td>
+                                    <div class="d-flex justify-content-center gap-2">
+                                        <a href="{% url 'admin_commodity_allocation' i.id %}" class="btn btn-outline-primary btn-sm fw-semibold px-3 rounded-pill">
+                                            <i class="fa-solid fa-boxes-stacked me-1"></i> Allocate
+                                        </a>
+                                        <a href="{% url 'admin_delete_card_type' i.id %}" class="btn btn-outline-danger btn-sm fw-semibold px-3 rounded-pill" onclick="return confirm('Delete this card type?');">
+                                            <i class="fa-solid fa-trash me-1"></i> Delete
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

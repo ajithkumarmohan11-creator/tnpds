@@ -1,0 +1,74 @@
+{% extends 'common/base_home_page.html' %}
+{% block content %}
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-7">
+            <div class="card shadow-sm border-0">
+                <div class="card-header bg-danger text-white">
+                    <h5 class="mb-0"><i class="fa-solid fa-triangle-exclamation"></i> Family Member Deletion Request</h5>
+                </div>
+
+                <!-- Django Messages Display -->
+                {% if messages %}
+                    <div class="p-3">
+                        {% for message in messages %}
+                            <div class="alert alert-{{ message.tags }} alert-dismissible fade show mb-0" role="alert">
+                                {{ message }}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+                    
+                <div class="card-body">
+                    <!--  Member-oda Full Details Summary Card -->
+                    <div class="card bg-light border-0 mb-4 p-3">
+                        <h6 class="text-primary fw-bold mb-3"><i class="fa-solid fa-user"></i> Member Details to be Deleted</h6>
+                        <div class="row g-2 small">
+                            <div class="col-md-6"><strong>Full Name:</strong> {{ member.name }}</div>
+                            <div class="col-md-6"><strong>Date of Birth:</strong> {{ member.dob }}</div>
+                            <div class="col-md-6"><strong>Gender:</strong> {{ member.gender }}</div>
+                            <div class="col-md-6"><strong>Relation:</strong> {{ member.relation }}</div>
+                            <div class="col-md-6"><strong>Mobile Number:</strong> {{ member.mobile_number }}</div>
+                            <div class="col-md-6"><strong>Aadhaar Number:</strong> {{ member.aadhaar_number }}</div>
+                            {% if member.email_id %}
+                                <div class="col-12"><strong>Email ID:</strong> {{ member.email_id }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <form method="POST" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        
+                        <!-- Reason for Deletion -->
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Reason for Deletion <span class="text-danger">*</span></label>
+                            <textarea name="reason" class="form-control" rows="3" placeholder="Enter reason (e.g., Marriage, Migration, Death, etc.)" required></textarea>
+                        </div>
+
+                        <!-- Supporting Proof Document -->
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Supporting Proof Document</label>
+                            <input type="file" name="document_copy" class="form-control">
+                            <small class="text-muted">Upload death certificate, marriage certificate, or transfer proof if applicable.</small>
+                        </div>
+
+                        <!--  Confirmation Checkbox -->
+                        <div class="mb-3 form-check">
+                            <input type="checkbox" class="form-check-input" id="confirmDelete" required>
+                            <label class="form-check-label fw-bold text-danger" for="confirmDelete">
+                                I confirm that I want to request the deletion of this family member.
+                            </label>
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-danger btn-sm py-2">Submit Deletion Request for Officer Approval</button>
+                            <a href="{% url 'consumer_profile' %}" class="btn btn-outline-secondary btn-sm">Cancel</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

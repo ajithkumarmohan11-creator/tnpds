@@ -1,0 +1,87 @@
+{% extends 'common_signup_login.html' %}
+{% load static %}
+
+{% block title %}{{ title |default:"Login" }}{% endblock %}
+
+{% block content %}
+<div class="auth-card-face auth-card-front" style="position: relative; width: 100%;">
+    <div class="text-center mb-4">
+        <img src="{% static 'images/tnpds_logo.jpg' %}" alt="TNPDS Logo" style="height: 75px; width: 75px; object-fit: cover; border-radius: 50%; box-shadow: 0 4px 10px rgba(0,0,0,0.1); cursor: pointer;" class="mb-3 mx-auto d-block" onclick="openLogoPopup()">
+        <h5 class="fw-bold text-dark mb-1" style="font-size: 1.15rem;">{{ title }}</h5>
+        <small class="text-muted" style="font-size: 0.78rem;">{{ subtitle }}</small>
+    </div>
+
+    {% if auto_export or auto_flip %}
+        <div class="error-countdown-box my-4">
+            <div class="text-danger fw-bold mb-2">
+                <i class="fa-solid fa-triangle-exclamation fa-lg me-1"></i> 
+                {% if messages %}
+                    {% for m in messages %}{{ m }}{% endfor %}
+                {% else %}
+                    பதிவு செய்யப்படாத எண்!
+                {% endif %}
+            </div>
+            <p class="text-secondary small mb-0">
+                புதிய கணக்கிற்கு மாறுகிறது... <span id="countdownTimer" class="fw-bold text-dark fs-5">5</span> விநாடிகள்
+            </p>
+        </div>
+    {% else %}
+        {% if messages %}
+            {% for m in messages %}
+                <div class="alert alert-{{ m.tags|default:'warning' }} py-2 px-2 text-center small mb-3 shadow-sm" style="font-size: 0.8rem; border-radius: 8px;">
+                    <i class="fa-solid fa-circle-exclamation me-1"></i> {{ m }}
+                </div>
+            {% endfor %}
+        {% endif %}
+
+        <form method="post" action="{{ url }}">
+            {% csrf_token %}
+            
+            {% for field in form %}
+                <div class="custom-form-fields mb-3">
+                    <label class="form-label small fw-semibold text-secondary mb-1">{{ field.label }}</label>
+                    {{ field }}
+                </div>
+            {% endfor %}
+            
+            <button type="submit" class="btn btn-primary w-100 py-2 fw-bold rounded-3 shadow-sm mb-3">
+                உள்நுழைக (Login)
+            </button>
+        </form>
+
+        <div class="text-center border-top pt-3 mt-1">
+            <span class="small text-secondary">New {{ new_user }} ? </span>
+            <a href="{% url signup_url %}" class="btn btn-link text-primary fw-bold p-0 text-decoration-none small">
+                இங்கே கணக்கு தொடங்கவும் (Sign Up) <i class="fa-solid fa-arrow-right ms-1"></i>
+            </a>
+        </div>
+
+        <div class="text-center mt-3">
+            <a href="{% url home_url %}" class="small text-secondary text-decoration-none fw-semibold">
+                <i class="fa-solid fa-house me-1"></i> முகப்புப் பக்கம்
+            </a>
+        </div>
+    {% endif %}
+</div>
+
+<script>
+    function closeLogoPopup() {
+        document.getElementById("logoOverlay").classList.remove("show");
+    }
+
+    {% if auto_export or auto_flip %}
+    document.addEventListener("DOMContentLoaded", function () {
+        let secondsLeft = 5;
+        const timerElem = document.getElementById("countdownTimer");
+        const countdownInterval = setInterval(function () {
+            secondsLeft--;
+            if (timerElem) timerElem.innerText = secondsLeft;
+            if (secondsLeft <= 0) {
+                clearInterval(countdownInterval);
+                window.location.href = "{% url signup_url %}";
+            }
+        }, 1000);
+    });
+    {% endif %}
+</script>
+{% endblock %}

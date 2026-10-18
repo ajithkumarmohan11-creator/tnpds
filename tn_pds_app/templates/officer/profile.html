@@ -1,0 +1,34 @@
+{% extends 'common/base_home_page.html' %}
+{% block content %}
+<div class="container my-4">
+    <h2 class="text-center text-primary mb-4 fw-bold">Officer Profile & Details</h2>
+    
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow-sm border-0 rounded-3">
+                <div class="card-header bg-primary text-white text-center py-3">
+                    <h4 class="mb-0 fw-bold"><i class="fa-solid fa-user-shield me-2"></i>Officer Information</h4>
+                </div>
+                <div class="card-body p-4">
+                    <table class="table table-bordered table-striped align-middle mb-0">
+                        <tbody>
+                            {% for label, value in profile_data %}
+                            <tr>
+                                <th class="w-50 text-secondary">{{ label }}</th>
+                                <td class="fw-semibold text-dark">{{ value }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                    
+                    <div class="text-center mt-4">
+                        <a href="{% url 'officer_home_page' %}" class="btn btn-secondary px-4 fw-bold">
+                            ← Back to Home page
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

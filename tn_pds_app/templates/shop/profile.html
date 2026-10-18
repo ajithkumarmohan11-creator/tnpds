@@ -1,0 +1,48 @@
+{% extends 'common/base_home_page.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="card shadow-sm mx-auto" style="max-width: 650px; border-radius: 12px;">
+        <div class="card-header bg-success text-white text-center py-3">
+            <h4 class="mb-0 fw-bold">Shop & Worker Profile</h4>
+        </div>
+        <div class="card-body p-4">
+            <table class="table table-bordered table-striped">
+                <tbody>
+                    {% if shop %}
+                    <tr class="table-light">
+                        <th colspan="2" class="text-primary fw-bold">Shop Details</th>
+                    </tr>
+                    <tr>
+                        <th>Shop ID</th>
+                        <td><span class="badge bg-primary fs-6">Shop #{{ shop.shop_id }}</span></td>
+                    </tr>
+                    {% endif %}
+
+                    {% if worker %}
+                    <tr class="table-light">
+                        <th colspan="2" class="text-primary fw-bold">Worker Details</th>
+                    </tr>
+                    <tr>
+                        <th class="w-40">Worker ID</th>
+                        <td>{{ worker.shop_worker_id }}</td>
+                    </tr>
+                    <tr>
+                        <th>Mobile Number</th>
+                        <td>{{ worker.mobile_number }}</td>
+                    </tr>
+                    {% endif %}
+
+                    
+                </tbody>
+            </table>
+
+            <div class="text-center mt-4">
+                <a href="{% url 'shop_home_page' %}" class="btn btn-primary px-4">
+                    ← Back to Home
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,247 @@
+{% extends 'common/base_home_page.html' %}
+{% block content %}
+<div class="container my-4">
+    <div class="row mb-3">
+        <div class="col-md-12">
+            <h2>Field-Level Edit Request Review</h2>
+            <p class="text-muted">Card Number: <strong>{{ crud_req.consumer.card_number }}</strong> | Member: <strong>{{ member.name }}</strong></p>
+        </div>
+    </div>
+
+    <form method="POST">
+        {% csrf_token %}
+        <div class="card shadow-sm border-0 mb-4">
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-bordered table-hover align-middle">
+                        <thead class="table-dark">
+                            <tr>
+                                <th>Field Name</th>
+                                <th>Current Data (Existing)</th>
+                                <th>Requested New Data</th>
+                                <th>Proof Document</th>
+                                <th>Individual Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- NAME -->
+                            <tr>
+                                <td class="fw-bold">Name</td>
+                                <td class="text-secondary">{{ member.name }}</td>
+                                <td>
+                                    {% if 'name' in changed_fields_list %}
+                                        <span class="text-success fw-bold">{{ crud_req.name }}</span>
+                                    {% else %}
+                                        <span class="text-muted">-</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if 'name' in changed_fields_list and crud_req.document_copy %}
+                                        <a href="{{ crud_req.document_copy.url }}" target="_blank" class="btn btn-sm btn-outline-primary">
+                                            <i class="bi bi-file-earmark-text"></i> View Proof
+                                        </a>
+                                    {% else %}
+                                        <span class="text-muted">-</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if 'name' in changed_fields_list %}
+                                        <div class="btn-group" role="group">
+                                            <input type="radio" class="btn-check" name="name_action" value="APPROVE" id="name_approve" autocomplete="off">
+                                            <label class="btn btn-outline-success btn-sm" for="name_approve">Approve</label>
+                                            <input type="radio" class="btn-check" name="name_action" value="REJECT" id="name_reject" autocomplete="off" checked>
+                                            <label class="btn btn-outline-danger btn-sm" for="name_reject">Reject</label>
+                                        </div>
+                                    {% else %}
+                                        <span class="badge bg-light text-dark">No Edit Requested</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+
+                            <!-- DOB -->
+                            <tr>
+                                <td class="fw-bold">Date of Birth</td>
+                                <td class="text-secondary">{{ member.dob|date:"d M Y" }}</td>
+                                <td>
+                                    {% if 'dob' in changed_fields_list %}
+                                        <span class="text-success fw-bold">{{ crud_req.dob|date:"d M Y" }}</span>
+                                    {% else %}
+                                        <span class="text-muted">-</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if 'dob' in changed_fields_list and crud_req.document_copy %}
+                                        <a href="{{ crud_req.document_copy.url }}" target="_blank" class="btn btn-sm btn-outline-primary">
+                                            <i class="bi bi-file-earmark-text"></i> View Proof
+                                        </a>
+                                    {% else %}
+                                        <span class="text-muted">-</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if 'dob' in changed_fields_list %}
+                                        <div class="btn-group" role="group">
+                                            <input type="radio" class="btn-check" name="dob_action" value="APPROVE" id="dob_approve" autocomplete="off">
+                                            <label class="btn btn-outline-success btn-sm" for="dob_approve">Approve</label>
+                                            <input type="radio" class="btn-check" name="dob_action" value="REJECT" id="dob_reject" autocomplete="off" checked>
+                                            <label class="btn btn-outline-danger btn-sm" for="dob_reject">Reject</label>
+                                        </div>
+                                    {% else %}
+                                        <span class="badge bg-light text-dark">No Edit Requested</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+
+                            <!-- GENDER -->
+                            <tr>
+                                <td class="fw-bold">Gender</td>
+                                <td class="text-secondary">{{ member.gender }}</td>
+                                <td>
+                                    {% if 'gender' in changed_fields_list %}
+                                        <span class="text-success fw-bold">{{ crud_req.gender }}</span>
+                                    {% else %}
+                                        <span class="text-muted">-</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if 'gender' in changed_fields_list and crud_req.document_copy %}
+                                        <a href="{{ crud_req.document_copy.url }}" target="_blank" class="btn btn-sm btn-outline-primary">
+                                            <i class="bi bi-file-earmark-text"></i> View Proof
+                                        </a>
+                                    {% else %}
+                                        <span class="text-muted">-</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if 'gender' in changed_fields_list %}
+                                        <div class="btn-group" role="group">
+                                            <input type="radio" class="btn-check" name="gender_action" value="APPROVE" id="gender_approve" autocomplete="off">
+                                            <label class="btn btn-outline-success btn-sm" for="gender_approve">Approve</label>
+                                            <input type="radio" class="btn-check" name="gender_action" value="REJECT" id="gender_reject" autocomplete="off" checked>
+                                            <label class="btn btn-outline-danger btn-sm" for="gender_reject">Reject</label>
+                                        </div>
+                                    {% else %}
+                                        <span class="badge bg-light text-dark">No Edit Requested</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+
+                            <!-- RELATION -->
+                            <tr>
+                                <td class="fw-bold">Relation</td>
+                                <td class="text-secondary">{{ member.relation }}</td>
+                                <td>
+                                    {% if 'relation' in changed_fields_list %}
+                                        <span class="text-success fw-bold">{{ crud_req.relation }}</span>
+                                    {% else %}
+                                        <span class="text-muted">-</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if 'relation' in changed_fields_list and crud_req.document_copy %}
+                                        <a href="{{ crud_req.document_copy.url }}" target="_blank" class="btn btn-sm btn-outline-primary">
+                                            <i class="bi bi-file-earmark-text"></i> View Proof
+                                        </a>
+                                    {% else %}
+                                        <span class="text-muted">-</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if 'relation' in changed_fields_list %}
+                                        <div class="btn-group" role="group">
+                                            <input type="radio" class="btn-check" name="relation_action" value="APPROVE" id="relation_approve" autocomplete="off">
+                                            <label class="btn btn-outline-success btn-sm" for="relation_approve">Approve</label>
+                                            <input type="radio" class="btn-check" name="relation_action" value="REJECT" id="relation_reject" autocomplete="off" checked>
+                                            <label class="btn btn-outline-danger btn-sm" for="relation_reject">Reject</label>
+                                        </div>
+                                    {% else %}
+                                        <span class="badge bg-light text-dark">No Edit Requested</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+
+                            <!-- MOBILE NUMBER -->
+                            <tr>
+                                <td class="fw-bold">Mobile Number</td>
+                                <td class="text-secondary">{{ member.mobile_number }}</td>
+                                <td>
+                                    {% if 'mobile_number' in changed_fields_list %}
+                                        <span class="text-success fw-bold">{{ crud_req.mobile_number }}</span>
+                                    {% else %}
+                                        <span class="text-muted">-</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if 'mobile_number' in changed_fields_list and crud_req.document_copy %}
+                                        <a href="{{ crud_req.document_copy.url }}" target="_blank" class="btn btn-sm btn-outline-primary">
+                                            <i class="bi bi-file-earmark-text"></i> View Proof
+                                        </a>
+                                    {% else %}
+                                        <span class="text-muted">-</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if 'mobile_number' in changed_fields_list %}
+                                        <div class="btn-group" role="group">
+                                            <input type="radio" class="btn-check" name="mobile_action" value="APPROVE" id="mobile_approve" autocomplete="off">
+                                            <label class="btn btn-outline-success btn-sm" for="mobile_approve">Approve</label>
+                                            <input type="radio" class="btn-check" name="mobile_action" value="REJECT" id="mobile_reject" autocomplete="off" checked>
+                                            <label class="btn btn-outline-danger btn-sm" for="mobile_reject">Reject</label>
+                                        </div>
+                                    {% else %}
+                                        <span class="badge bg-light text-dark">No Edit Requested</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+
+                            <!-- EMAIL ID -->
+                            <tr>
+                                <td class="fw-bold">Email ID</td>
+                                <td class="text-secondary">{{ member.email_id|default:"-" }}</td>
+                                <td>
+                                    {% if 'email_id' in changed_fields_list %}
+                                        <span class="text-success fw-bold">{{ crud_req.email_id }}</span>
+                                    {% else %}
+                                        <span class="text-muted">-</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if 'email_id' in changed_fields_list and crud_req.document_copy %}
+                                        <a href="{{ crud_req.document_copy.url }}" target="_blank" class="btn btn-sm btn-outline-primary">
+                                            <i class="bi bi-file-earmark-text"></i> View Proof
+                                        </a>
+                                    {% else %}
+                                        <span class="text-muted">-</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if 'email_id' in changed_fields_list %}
+                                        <div class="btn-group" role="group">
+                                            <input type="radio" class="btn-check" name="email_action" value="APPROVE" id="email_approve" autocomplete="off">
+                                            <label class="btn btn-outline-success btn-sm" for="email_approve">Approve</label>
+                                            <input type="radio" class="btn-check" name="email_action" value="REJECT" id="email_reject" autocomplete="off" checked>
+                                            <label class="btn btn-outline-danger btn-sm" for="email_reject">Reject</label>
+                                        </div>
+                                    {% else %}
+                                        <span class="badge bg-light text-dark">No Edit Requested</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="mb-3 mt-3">
+                    <label class="form-label fw-bold">Officer Remarks / Reason:</label>
+                    <textarea name="officer_remarks" class="form-control" rows="2" placeholder="Enter review remarks..." required></textarea>
+                </div>
+
+                <div class="text-end">
+                    <a href="{% url 'officer_pending_request' %}" class="btn btn-secondary btn-sm">Cancel</a>
+                    <button type="submit" class="btn btn-success btn-sm px-4 fw-bold">Submit Field Reviews</button>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+{% endblock %}

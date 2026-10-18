@@ -1,0 +1,85 @@
+{% extends 'common/base_home_page.html' %}
+{% block title %} Card-Specific Max Qty Allocation {% endblock %}
+{% block content %}
+<div class="container-fluid py-4 px-4">
+    <div class="row justify-content-center mb-4">
+        <div class="col-xl-12 d-flex justify-content-between align-items-center">
+            <div>
+                <h4 class="fw-bold text-dark text-uppercase mb-1">
+                    <i class="fa-solid fa-boxes-stacked text-primary me-2"></i>Card-Specific Max Limits
+                </h4>
+                <p class="text-muted small mb-0">Card Type: <span class="badge bg-success">{{ selected_card.card_type|upper }}</span></p>
+            </div>
+            <a href="{% url 'admin_add_card_type' %}" class="btn btn-outline-secondary btn-sm fw-semibold rounded-pill px-3">
+                <i class="fa-solid fa-arrow-left me-1"></i> Back to Cards
+            </a>
+        </div>
+    </div>
+
+    <div class="row justify-content-center">
+        <div class="col-xl-12">
+            <div class="card shadow-sm border-0 rounded-4 overflow-hidden mb-5">
+                <div class="card-header bg-primary text-white py-3 text-center">
+                    <h5 class="fw-bold mb-0 text-uppercase">Configure Max Qty for {{ selected_card.card_type|upper }}</h5>
+                </div>
+                <div class="card-body p-4 bg-white">
+                    <form method="post">
+                        {% csrf_token %}
+                        <div class="table-responsive">
+                            <table class="table table-hover align-middle mb-4">
+                                <thead class="table-light text-secondary text-uppercase small text-center">
+                                    <tr>
+                                        <th style="width: 50px;">S.No</th>
+                                        <th class="text-start" style="min-width: 200px;">Commodity Name</th>
+                                        <th style="width: 120px;">Global Min Qty</th>
+                                        <th style="width: 130px;" class="text-danger">Card Max Qty</th>
+                                        <th style="width: 150px;">Group Name</th>
+                                        <th style="width: 150px;">Group Max Cap</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for commodity in commodity_list %}
+                                    <tr>
+                                        <td class="text-center text-muted fw-bold">{{ forloop.counter }}</td>
+                                        <td>
+                                            <div class="d-flex align-items-center gap-2">
+                                                <div class="border rounded-3 p-1 bg-light d-flex align-items-center justify-content-center shadow-sm" style="width: 40px; height: 40px; min-width: 40px;">
+                                                    {% if commodity.image %}
+                                                        <img src="{{ commodity.image }}" alt="{{ commodity.name }}" class="rounded-2" style="max-height: 100%; max-width: 100%; object-fit: contain;">
+                                                    {% else %}
+                                                        <i class="fa-solid fa-bowl-rice text-muted"></i>
+                                                    {% endif %}
+                                                </div>
+                                                <div>
+                                                    <span class="fw-bold text-dark text-capitalize" style="font-size: 13px;">{{ commodity.name }}</span>
+                                                    <small class="text-muted d-block" style="font-size: 11px;">{{ commodity.unit }}</small>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <!-- Global Min Qty (Read-only reference) -->
+                                        <td class="text-center fw-semibold text-muted">{{ commodity.min_qty }}</td>
+                                        <!-- Card-Specific Max Qty (Editable) -->
+                                        <td>
+                                            <input type="number" class="form-control form-control-sm text-center fw-bold text-danger" step="0.01" min="0" name="max_qty_{{ commodity.id }}" value="{{ commodity.max_qty }}" placeholder="0.00">
+                                        </td>
+                                        <!-- Group Name (Read-only reference) -->
+                                        <td class="text-center text-muted">{{ commodity.group_name|default:"None" }}</td>
+                                        <!-- Group Max Cap (Read-only reference) -->
+                                        <td class="text-center fw-semibold text-primary">{{ commodity.group_max_cap }}</td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="d-grid mt-4">
+                            <button type="submit" class="btn btn-success btn-lg fw-bold rounded-pill shadow-sm">
+                                <i class="fa-solid fa-floppy-disk me-2"></i> Save Card-Specific Max Limits
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
